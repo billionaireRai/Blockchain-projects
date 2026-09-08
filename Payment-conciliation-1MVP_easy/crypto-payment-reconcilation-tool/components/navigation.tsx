@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useState , useRef } from "react"
 import { motion } from "framer-motion";
 import { NavItemsType } from "@/types/navitem.type"
-import { LayoutDashboard, CreditCard, ArrowLeftRight, RefreshCcw, Wallet, Users, FileText, BarChart3 , LucideOption, LogIn , UserRoundPlus, WalletCardsIcon, AtSignIcon, UserCheck2 } from "lucide-react";
+import { CreditCard, ArrowLeftRight, RefreshCcw, Wallet, Users, FileText, BarChart3 , LogIn , UserRoundPlus, WalletCardsIcon, AtSignIcon, LayoutDashboardIcon, ListChevronsUpDown, ListChevronsDownUp, ArrowRightCircle } from "lucide-react";
 import Themeswitch from "./Themeswitch";
 import usePopClose from "@/hooks/usePopClose";
 
@@ -19,6 +19,12 @@ export default function NavigationBar() {
 
   // navigations items in option... 
 const navItems:NavItemsType[] = [
+{
+  icon: <LayoutDashboardIcon size={25} />,
+  label: "Dashboard",
+  description:
+    "Get comprehensive overview of your account, including payment activity, transaction performance, reconciliation status, wallet balances, and key financial insights.",
+},
 {
   icon: <CreditCard size={25} />,
   label: "Payments",
@@ -47,7 +53,7 @@ const navItems:NavItemsType[] = [
   icon: <Users size={25} />,
   label: "Users",
   description:
-    "Manage team members, assign roles and permissions, control account access, and maintain secure access to your organization's financial data.",
+    "Manage members, there wallets, assign roles and permissions, control account access, and maintain secure access to your organization's financial data.",
 },
 {
   icon: <FileText size={25} />,
@@ -61,12 +67,6 @@ const navItems:NavItemsType[] = [
   description:
     "Analyze financial performance with detailed reports on payments, transactions, reconciliations, balances, and other important business metrics.",
 },
-{
-  icon: <UserCheck2 size={25} />,
-  label: "User Profile",
-  description:
-    `View and manage the profile information, account details, preferences, and personal settings associated with ${"Amritansh Rai"}.`,
-}
 ]
 
 usePopClose(loginPop,setloginPop,loginPopUpRef) ;
@@ -74,18 +74,15 @@ usePopClose(openOptions,setopenOptions,optionRef)
   return (
     <>
      <div className="sticky top-0 rounded-full">
-      <div className="relative flex items-center justify-between rounded-full backdrop-blur-md dark:bg-black font-rubik p-2">
+      <div className="relative flex items-center justify-between rounded-full backdrop-blur-md dark:bg-black font-rubik py-1 px-2">
         <section className="rounded-full shrink-0" >
           <Image src={logo} alt="paylume.logo" height={150} width={150} className=" rounded-full" />
         </section>
         <section className="flex items-center justify-center gap-1 rounded-full p-1">
          <div 
           onClick={() => { setopenOptions(!openOptions) }} 
-          className="flex w-fit cursor-pointer items-center gap-2 overflow-hidden rounded-full bg-white py-2 px-3 text-black">
-          <LucideOption size={20} />
-          <span className="overflow-hidden whitespace-nowrap text-sm font-medium">
-            Options
-          </span>
+          className="flex w-fit cursor-pointer items-center gap-2 overflow-hidden rounded-full bg-white hover:bg-gray-50 p-2 text-black">
+          { openOptions ? <ListChevronsDownUp size={20} /> : <ListChevronsUpDown size={20} /> }
          </div>
           <div className="flex items-center gap-2 justify-center w-fit rounded-full p-2">
             <div className="flex items-center justify-center gap-1.5 rounded-full">
@@ -100,7 +97,7 @@ usePopClose(openOptions,setopenOptions,optionRef)
                  initial={{ opacity: 0, scale: 0.9, y: 0 , x: 0 }}
                  animate={{ opacity: 1, scale: 1, y: -8 , x:-8 }}
                  exit={{ opacity: 0, scale: 0.9, y: -4 , x:-4 }}
-                 transition={{ duration: 0.2, ease: 'easeOut' }}
+                 transition={{ duration: 0.2, ease: 'easeInOut' }}
                  style={{ transformOrigin: 'top right', willChange: 'transform, opacity' }}
                  className="absolute top-13 right-0 shadow-lg rounded-xl w-80 max-w-sm p-1 flex flex-col items-center justify-center gap-1" >
                   <Link href={'/auth/login'} className="rounded-2xl hover:bg-gray-100 flex items-center justify-center gap-1 p-2">
@@ -131,14 +128,15 @@ usePopClose(openOptions,setopenOptions,optionRef)
       {openOptions && (
        <motion.div
          ref={optionRef}
-         initial={{ opacity: 0, y: -30 }}
-         animate={{ opacity: 1, y: 0 }}
-         exit={{ opacity: 0, y: -15 }}
-         transition={{ type: "spring", stiffness: 200, damping: 25 }}
-         className="absolute top-full right-1/6 font-rubik w-fit max-w-3/4 p-2 m-2 grid grid-cols-3 gap-1 shadow-lg rounded-xl"
+         initial={{ opacity: 0, scale: 0.9, y: 0 , x: 0 }}
+         animate={{ opacity: 1, scale: 1, y: -15 , x:-15 }}
+         exit={{ opacity: 0, scale: 0.9, y: -8 , x:-8 }}
+         transition={{ duration: 0.2, ease: 'easeInOut' }}
+         style={{ transformOrigin: 'top right', willChange: 'transform, opacity' }}
+         className="absolute top-full right-1/6 font-rubik w-fit max-w-3/4 p-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1 shadow-lg rounded-xl"
        >
         {navItems.map((nav,index) => (
-         <div key={index} className="rounded-xl cursor-pointer hover:bg-gray-50 flex items-center justify-start gap-1 p-2">
+         <div key={index} className="rounded-xl cursor-pointer border border-white dark:border-black hover:border-red-700 hover:bg-red-50 ring-0 hover:ring-3 hover:ring-red-700/8 flex items-center justify-start gap-1 p-2 transition-colors duration-300">
            <div className="p-2 rounded-full">{nav.icon}</div>
            <div className="flex flex-col">
              <span className="font-semibold rounded-2xl p-1 text-md">{nav.label}</span>
@@ -146,6 +144,29 @@ usePopClose(openOptions,setopenOptions,optionRef)
            </div>
          </div>
         ))}
+        <div className="rounded-xl group cursor-pointer border border-white dark:border-black hover:border-red-700 hover:bg-red-50 hover:ring-3 hover:ring-red-700/8 flex gap-1 items-center justify-center p-2 transition-colors duration-300">
+         <div className="size-14 shrink-0 overflow-hidden rounded-full">
+           <Image
+             src="/images/amritansh-avatar.png"
+             alt="user-avatar"
+             width={56}
+             height={56}
+             className="size-full rounded-full object-cover"
+           />
+         </div>
+         <div className="flex flex-col">
+          <span className="font-semibold rounded-2xl p-1 text-md">@amritanshraii</span>
+          <p className="text-xs text-gray-400 rounded-lg px-1">Go to your profile on paylume by username amritanshraii</p>
+         </div>
+         <motion.div
+          initial={{ opacity: 0, scale: 0.7 , x: 0 }}
+          animate={{ opacity: 1, scale: 1 , x:8 }}
+          exit={{ opacity: 0, scale: 0.7 , x:-4 }}
+          transition={{ duration: 0.4, ease: 'easeInOut' }}
+          className="p-2 rounded-full hidden group-hover:block">
+          <ArrowRightCircle size={30} />
+         </motion.div>
+        </div>
        </motion.div>
       )}
      </div>

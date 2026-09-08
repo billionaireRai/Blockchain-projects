@@ -1,6 +1,6 @@
 
 export interface NavItemsType {
-    icon: React.ReactElement ;
+    icon?: React.ReactElement ;
     label: string ;
     description: string ;
 }
