@@ -19,7 +19,7 @@ const Themeswitch = () => {
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
       aria-pressed={isDark}
       onClick={toggleTheme}
-      className={`relative flex h-8 w-8 items-center justify-center rounded-full cursor-pointer transition-colors duration-300 active:scale-95 ${
+      className={`relative flex h-8.5 w-8.5 items-center justify-center rounded-full cursor-pointer transition-colors duration-300 active:scale-95 ${
         isDark
           ? "bg-black text-white"
           : "bg-white text-black"

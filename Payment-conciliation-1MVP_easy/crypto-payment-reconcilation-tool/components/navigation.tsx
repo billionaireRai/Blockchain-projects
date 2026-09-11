@@ -74,7 +74,7 @@ usePopClose(openOptions,setopenOptions,optionRef)
   return (
     <>
      <div className="sticky top-0 rounded-full">
-      <div className="relative flex items-center justify-between rounded-full backdrop-blur-md dark:bg-black font-rubik py-1 px-2">
+      <div className="relative flex items-center justify-between rounded-full backdrop-blur-md dark:bg-black font-rubik p-1">
         <section className="rounded-full shrink-0" >
           <Image src={logo} alt="paylume.logo" height={150} width={150} className=" rounded-full" />
         </section>
@@ -99,7 +99,7 @@ usePopClose(openOptions,setopenOptions,optionRef)
                  exit={{ opacity: 0, scale: 0.9, y: -4 , x:-4 }}
                  transition={{ duration: 0.2, ease: 'easeInOut' }}
                  style={{ transformOrigin: 'top right', willChange: 'transform, opacity' }}
-                 className="absolute top-13 right-0 shadow-lg rounded-xl w-80 max-w-sm p-1 flex flex-col items-center justify-center gap-1" >
+                 className="absolute bg-white top-13 right-0 shadow-lg rounded-xl w-80 max-w-sm p-1 flex flex-col items-center justify-center gap-1" >
                   <Link href={'/auth/login'} className="rounded-2xl hover:bg-gray-100 flex items-center justify-center gap-1 p-2">
                     <div className="p-2 rounded-full"><AtSignIcon size={25} /></div>
                     <div className="flex flex-col">
@@ -133,10 +133,10 @@ usePopClose(openOptions,setopenOptions,optionRef)
          exit={{ opacity: 0, scale: 0.9, y: -8 , x:-8 }}
          transition={{ duration: 0.2, ease: 'easeInOut' }}
          style={{ transformOrigin: 'top right', willChange: 'transform, opacity' }}
-         className="absolute top-full right-1/6 font-rubik w-fit max-w-3/4 p-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1 shadow-lg rounded-xl"
+         className="absolute bg-white dark:bg-black top-full right-1/6 font-rubik w-fit max-w-3/4 p-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1 shadow-lg rounded-xl"
        >
         {navItems.map((nav,index) => (
-         <div key={index} className="rounded-xl cursor-pointer border border-white dark:border-black hover:border-red-700 hover:bg-red-50 ring-0 hover:ring-3 hover:ring-red-700/8 flex items-center justify-start gap-1 p-2 transition-colors duration-300">
+         <div key={index} className="rounded-xl cursor-pointer border border-white dark:border-black hover:border-red-600 hover:bg-red-50 ring-0 hover:ring-3 hover:ring-red-700/8 flex items-center justify-start gap-1 p-2 transition-colors duration-300">
            <div className="p-2 rounded-full">{nav.icon}</div>
            <div className="flex flex-col">
              <span className="font-semibold rounded-2xl p-1 text-md">{nav.label}</span>
@@ -144,7 +144,7 @@ usePopClose(openOptions,setopenOptions,optionRef)
            </div>
          </div>
         ))}
-        <div className="rounded-xl group cursor-pointer border border-white dark:border-black hover:border-red-700 hover:bg-red-50 hover:ring-3 hover:ring-red-700/8 flex gap-1 items-center justify-center p-2 transition-colors duration-300">
+        <div className="rounded-xl group cursor-pointer border border-white dark:border-black hover:border-red-600 hover:bg-red-50 hover:ring-3 hover:ring-red-700/8 flex gap-1 items-center justify-center p-2 transition-colors duration-300">
          <div className="size-14 shrink-0 overflow-hidden rounded-full">
            <Image
              src="/images/amritansh-avatar.png"

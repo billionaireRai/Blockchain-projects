@@ -1,6 +1,7 @@
 
 import type { Metadata } from "next";
 import Providers from "./provider";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import NavigationBar from "@/components/Navigation";
 import { Rubik } from "next/font/google";
 import "./globals.css";
@@ -23,13 +24,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
       className={`${rubik.variable} h-full antialiased`} // tailwind approach for "font-rubik" 
     >
-      <body className="h-full flex flex-col rounded-lg overflow-y-auto overflow-x-hidden font-rubik">
+      <body className="h-full flex flex-col rounded-lg font-rubik">
+      <ThemeProvider>
        <Providers>
-         <div className="relative rounded-lg">
+         <div id="scrollsec" className="relative flex flex-col h-fit overflow-y-auto overflow-x-hidden rounded-lg">
           <NavigationBar />
           {children}
          </div>
        </Providers>
+      </ThemeProvider>
       </body>
     </html>
   );
