@@ -5,13 +5,27 @@ import Link from "next/link";
 import Image from "next/image";
 import Activebeep from "@/components/Beep";
 import { featureType } from "@/types/feature.type";
+import logoIcon from '@/public/images/paylume-icon.png';
+import logo from '@/public/images/paylume-logo.png';
+import Wallet from '@/public/images/bitcoin.png';
+import Metamask from '@/public/images/metamask-logo.png';
+import Tangem from '@/public/images/tangem-logo.png';
+import Phantom from '@/public/images/phantom-logo.png';
+import Trezor from '@/public/images/trezor-logo.png';
+import Realtimevisibility from '@/public/images/realtimevisibility.png';
+import Securitytrust from '@/public/images/securitytrust.png';
 import Accuracyscale from "@/public/images/accuracyscale.png";
 import ProcessExplain from '@/public/images/process-explain.png';
 import HeroImg from '@/public/images/paylume-hero-img.png'
+import InstagramLogo from '@/public/images/instagram.png';
+import BriezlLogo from '@/public/images/briezl.png';
+import TwitterLogo from '@/public/images/twitter.png';
+import GithubLogo from '@/public/images/github.png';
 import { Increasingdot } from "@/components/Increasingdot";
-import { BarChart3Icon, Link as LINK , LucideVerified , Zap, ShieldCheck, Activity,BarChart3 ,Clock3,LockKeyhole , ArrowUpCircleIcon, FunctionSquareIcon , Plug, Database, GitCompareArrows, SearchCheck, CircleAlert, FileCheck2, LucideHandshake, LucideRocket, LockKeyholeOpenIcon, ChartBarIncreasingIcon, TriangleAlertIcon, LucideLayoutDashboard, ActivitySquareIcon, ShieldCheckIcon, CircleCheckIcon, LogsIcon } from "lucide-react";
+import { BarChart3Icon, Link as LINK , LucideVerified , Zap, ShieldCheck, Activity,BarChart3 ,Clock3,LockKeyhole , ArrowUpCircleIcon, FunctionSquareIcon , Plug, Database, GitCompareArrows, SearchCheck, CircleAlert, FileCheck2, LucideHandshake, LucideRocket, LockKeyholeOpenIcon, ChartBarIncreasingIcon, TriangleAlertIcon, LucideLayoutDashboard, ActivitySquareIcon, ShieldCheckIcon, CircleCheckIcon, LogsIcon, StarIcon, List, AtSignIcon } from "lucide-react";
 import { handleScrollToTop } from "@/lib/Autoscroll";
 import { keyValuePair } from "@/types/keyvalue.type";
+import { WalletNameImgType } from "@/types/walletnameimg.type";
 
 export default function Home() {  
   const [LoginHover, setLoginHover] = useState<boolean>(false);
@@ -192,6 +206,48 @@ const SecurityFeatures:featureType[] = [
   },
 ];
 
+const popularWallets:WalletNameImgType[] = [
+  {
+    name:'Metamask',
+    staticimg:Metamask
+  },
+  {
+    name:'Phantom',
+    staticimg:Phantom
+  },
+  {
+    name:'Tangem',
+    staticimg:Tangem
+  },
+  {
+    name:'Trezor',
+    staticimg:Trezor
+  }
+]
+
+const socialMedia:WalletNameImgType[] = [
+  {
+    name:'Instagram',
+    staticimg:InstagramLogo,
+    url:'https://www.instagram.com/amritanshraii/'
+  },
+  {
+    name:'Twitter',
+    staticimg:TwitterLogo,
+    url:'https://x.com/Amritansh_Coder'
+  },
+  {
+    name:'Github',
+    staticimg:GithubLogo,
+    url:'https://github.com/billionaireRai'
+  },
+  {
+    name:'Briezl',
+    staticimg:BriezlLogo,
+    url:'https://www.briezl.com/@amritanshdev__'
+  }
+]
+
   return (
     <div className="flex flex-col flex-1 h-fit m-1 rounded-lg items-center justify-between font-rubik">
      <div className="HERO-SECTION flex flex-col lg:flex-row h-fit w-full gap-1 mb-20 rounded-lg">
@@ -335,8 +391,8 @@ const SecurityFeatures:featureType[] = [
            </p>
           </div>
           <div className="flex gap-1 items-center justify-evenly rounded-xl p-2 w-full">
-            {scalemetrics.map((m) => (
-              <div className="hover:shadow-sm group flex flex-col items-center justify-center gap-1 flex-1 p-2 rounded-xl">
+            {scalemetrics.map((m,idx) => (
+              <div key={idx} className="hover:shadow-sm group flex flex-col items-center justify-center gap-1 flex-1 p-2 rounded-xl">
                 <div className="text-xl md:text-2xl lg:text-3xl flex items-center justify-center gap-2 font-semibold"><span>{m.value}</span><ChartBarIncreasingIcon size={15} className="text-red-600 opacity-0 transition-opacity group-hover:opacity-100 duration-200" /></div>
                 <span className="text-sm text-gray-400">{m.label}</span>
               </div>
@@ -368,16 +424,16 @@ const SecurityFeatures:featureType[] = [
            </p>
           </div>
           <div className="flex gap-1 items-center justify-evenly rounded-xl p-2 w-full">
-            {scalemetrics.map((m) => (
-              <div className="hover:shadow-sm group flex flex-col items-center justify-center gap-1 flex-1 p-2 rounded-xl">
+            {scalemetrics.map((m,idx) => (
+              <div key={idx} className="hover:shadow-sm group flex flex-col items-center justify-center gap-1 flex-1 p-2 rounded-xl">
                 <div className="text-xl md:text-2xl lg:text-3xl flex items-center justify-center gap-2 font-semibold"><span>{m.value}</span><ChartBarIncreasingIcon size={15} className="text-red-600 opacity-0 transition-opacity group-hover:opacity-100 duration-200" /></div>
                 <span className="text-sm text-gray-400">{m.label}</span>
               </div>
             ))}
           </div>
           <div className="flex flex-col gap-1 items-center rounded-xl p-3">
-            {VisibilityPoints.map((v) => (
-              <div className="flex items-center justify-start gap-3 max-w-4/5 rounded-xl py-3 px-5">
+            {VisibilityPoints.map((v,idx) => (
+              <div key={idx} className="flex items-center justify-start gap-3 max-w-4/5 rounded-xl py-3 px-5">
                 <span className="flex h-11 w-11 p-2 items-center justify-center rounded-full border border-red-600 bg-red-500/6 text-red-600 ring-4 ring-red-500/10 transition-all duration-300"
                 >
                 {v.icon}
@@ -394,7 +450,7 @@ const SecurityFeatures:featureType[] = [
       </div>
       <div className="flex-1 rounded-lg">
         {/* need to change this image... */}
-        <Image src={Accuracyscale} alt="Accuracy-scale" className="rounded-lg" />
+        <Image src={Realtimevisibility} alt="Realtime-Visiblity" className="rounded-lg" />
       </div>
      </div>
      <div className="flex flex-col lg:flex-row-reverse items-start lg:items-center justify-center w-full rounded-lg mb-20">
@@ -417,8 +473,8 @@ const SecurityFeatures:featureType[] = [
            </p>
           </div>
           <div className="flex flex-col gap-1 items-center rounded-xl p-3">
-            {SecurityFeatures.map((F) => (
-              <div className="flex items-center justify-start gap-3 max-w-4/5 rounded-xl py-3 px-5">
+            {SecurityFeatures.map((F,idx) => (
+              <div key={idx} className="flex items-center justify-start gap-3 max-w-4/5 rounded-xl py-3 px-5">
                 <span className="flex h-11 w-11 p-2 items-center justify-center rounded-full border border-red-600 bg-red-500/6 text-red-600 ring-4 ring-red-500/10 transition-all duration-300"
                 >
                 {F.icon}
@@ -435,7 +491,94 @@ const SecurityFeatures:featureType[] = [
       </div>
       <div className="flex-1 rounded-lg">
         {/* need to change this image... */}
-        <Image src={Accuracyscale} alt="Accuracy-scale" className="rounded-lg" />
+        <Image src={Securitytrust} alt="Security-Trust" className="rounded-lg" />
+      </div>
+     </div>
+     <div className="flex flex-col gap-1 h-150 w-full rounded-lg">
+      <div className="flex gap-1 rounded-lg h-3/4">
+        <div className="rounded-lg flex flex-col gap-2 flex-1 p-2">
+          <header className="flex items-center justify-center gap-2 border border-zinc-400 w-fit py-1 px-3 rounded-full text-sm font-semibold text-zinc-400 bg-zinc-50">
+            <StarIcon size={15} />
+            <span>Some popular wallets</span>
+          </header>
+          <div className="flex flex-col items-start justify-center rounded-lg p-2">
+           <div className="max-w-4xl text-lg font-bold leading-[1.1] tracking-tight text-gray-950 md:text-xl lg:text-2xl">
+            <span>Connect your favourite wallet & get started</span>
+            <div className="text-red-600">
+              <span>in few minutes.</span>
+              <Increasingdot Number={4} Color="red"/>
+            </div>
+           </div>
+          </div>
+          <div className="flex items-center justify-center rounded-lg">
+            <span className="bg-yellow-100 rounded-full p-5"><Image src={Wallet} width={130} height={130} alt='wallets' /></span>
+          </div>
+          <div className="flex flex-auto items-center justify-evenly rounded-lg">
+            {popularWallets.map((wallet,idx) => (
+              <div key={idx} className="flex flex-col cursor-pointer group items-center justify-center gap-1 p-3 rounded-full">
+                <span className="group-hover:scale-104 transition-transform duration-200"><Image src={wallet.staticimg} width={50} height={50} alt='wallet' /></span>
+                <span className="text-zinc-600 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-zinc-100 py-1 px-3 rounded-full">{wallet.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="rounded-lg flex flex-col gap-2 justify-start p-1 flex-2">
+          <div className="flex items-center p-1 justify-between rounded-full">
+            <span className="rounded-full" >
+              <Image src={logo} alt="paylume.logo" height={150} width={150} className=" rounded-full" />
+            </span>
+            <section className="border border-red-600/60 ring-3 ring-red-500/10 text-sm rounded-full text-red-600 flex gap-3 items-center justify-between h-10 w-fit p-4">
+              <Activebeep />
+              <span>ETHEREUM NETWORK ONLY</span>
+            </section>
+          </div>
+          <div className="rounded-lg max-w-3/4">
+            <p className="rounded-lg p-2 text-sm">
+              Automate, reconcile, and verify every crypto payment across the Ethereum blockchain, exchanges, and multiple wallets—all from one powerful platform. CryptoReconcile brings your payment data into a unified system, helping businesses accurately track transactions, match payments, identify discrepancies, and maintain complete financial visibility without the complexity of manually checking wallets, networks, and transaction records...
+            </p>
+          </div>
+          <div className="flex items-center justify-between rounded-full">
+            <div className="bg-red-100 rounded-full flex w-fit gap-2 p-2 items-center justify-start">
+              {Corefeatures.map((f,idx) => (
+                <section key={idx} className="flex gap-2 bg-white cursor-pointer hover:shadow-md transition-shadow duration-300 items-center py-2 px-3 justify-center rounded-full">
+                  <span>{f.icon}</span>
+                  <span>{f.title}</span>
+                </section>
+              ))}
+            </div>
+            <div className="rounded-full">
+              <section className="flex items-center justify-center gap-2 border border-zinc-400 w-fit py-1 px-3 rounded-full text-sm font-semibold text-zinc-400 bg-zinc-50">
+                <List size={15} />
+                <span>Several features</span>
+              </section>
+            </div>
+          </div>
+            <div className="flex flex-auto items-center justify-evenly rounded-lg">
+              {socialMedia.map((media,idx) => 
+                media.url && (
+                  <Link href={media.url} key={idx} className="flex flex-col cursor-pointer group items-center justify-center gap-1 p-3 rounded-full">
+                    <span className="group-hover:scale-104 transition-transform duration-200"><Image src={media.staticimg} width={35} height={35} alt={media.name} /></span>
+                    <span className="text-zinc-600 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-zinc-100 py-1 px-3 rounded-full">{media.name}</span>
+                  </Link>
+              ))}
+              <section className="flex items-center justify-center gap-2 border border-zinc-400 w-fit py-1 px-3 rounded-full text-sm font-semibold text-zinc-400 bg-zinc-50">
+                <AtSignIcon size={15} />
+                <span>Relevant social media</span>
+              </section>
+          </div>
+        </div>
+      </div>
+      <div className="flex items-center justify-between rounded-lg p-2 h-1/4">
+       <div className="flex-3 flex items-center justify-start h-full rounded-lg">
+        <Image src={logoIcon} alt="paylume.logo.icon" height={60} width={60} className=" rounded-full p-2" />
+        <span className="text-zinc-500 text-sm">{new Date().getFullYear()} Paylume . All rights reserved</span>
+       </div>
+       <div className="text-zinc-500 flex items-center gap-2 justify-center flex-1 h-full rounded-lg">
+        <ShieldCheckIcon size={60} />
+        <span className="text-sm">
+          your crypto , our priority . Built with security , transperancy and trust !!
+        </span>
+       </div>
       </div>
      </div>
 
