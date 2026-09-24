@@ -5,13 +5,16 @@ import Image from "next/image";
 import logo from '@/public/images/paylume-logo.png' ;
 import Link from "next/link";
 import { useState , useRef } from "react"
+import { useTheme } from "next-themes";
+import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { NavItemsType } from "@/types/navitem.type"
 import { CreditCard, ArrowLeftRight, RefreshCcw, Wallet, Users, FileText, BarChart3 , LogIn , UserRoundPlus, WalletCardsIcon, AtSignIcon, LayoutDashboardIcon, ListChevronsUpDown, ListChevronsDownUp, ArrowRightCircle } from "lucide-react";
-import Themeswitch from "./Themeswitch";
 import usePopClose from "@/hooks/usePopClose";
 
 export default function NavigationBar() {
+  const path = usePathname() ; // initializing usePathname hook...
+  const pathNotAllowed = ['/auth/login','/auth/register'];
   const [openOptions, setopenOptions] = useState<boolean>(false);
   const [loginPop, setloginPop] = useState<boolean>(false);
   const optionRef = useRef<HTMLDivElement>(null);
@@ -70,25 +73,25 @@ const navItems:NavItemsType[] = [
 ]
 
 usePopClose(loginPop,setloginPop,loginPopUpRef) ;
-usePopClose(openOptions,setopenOptions,optionRef)
+usePopClose(openOptions,setopenOptions,optionRef) ;
+
+if (pathNotAllowed.includes(path)) return null ;
+
   return (
     <>
      <div className="sticky top-0 rounded-full">
-      <div className="relative flex items-center justify-between rounded-full backdrop-blur-md dark:bg-black font-rubik p-1">
+      <div className="relative flex items-center justify-between rounded-full backdrop-blur-3xl font-rubik p-1">
         <section className="rounded-full shrink-0" >
           <Image src={logo} alt="paylume.logo" height={150} width={150} className=" rounded-full" />
         </section>
         <section className="flex items-center justify-center gap-1 rounded-full p-1">
          <div 
           onClick={() => { setopenOptions(!openOptions) }} 
-          className="flex w-fit cursor-pointer items-center gap-2 overflow-hidden rounded-full bg-white hover:bg-gray-50 p-2 text-black">
+          className="flex w-fit cursor-pointer items-center gap-2 overflow-hidden rounded-full bg-white dark:text-white hover:bg-gray-50 p-2 text-black">
           { openOptions ? <ListChevronsDownUp size={20} /> : <ListChevronsUpDown size={20} /> }
          </div>
           <div className="flex items-center gap-2 justify-center w-fit rounded-full p-2">
-            <div className="flex items-center justify-center gap-1.5 rounded-full">
-              <Themeswitch />
-            </div>
-            <div onClick={() => { setloginPop(!loginPop) }} className="relative bg-zinc-50 cursor-pointer flex items-center justify-center gap-1.5 rounded-full py-2 px-3 transition-all duration-200 ease-out hover:bg-zinc-100">
+            <div onClick={() => { setloginPop(!loginPop) }} className="relative bg-zinc-50 dark:text-white cursor-pointer flex items-center justify-center gap-1.5 rounded-full py-2 px-3 ease-out hover:bg-zinc-100">
               <LogIn size={20} />
               <span>Login</span>
               {loginPop && (
@@ -117,7 +120,7 @@ usePopClose(openOptions,setopenOptions,optionRef)
                </motion.div>
               )}
             </div>
-            <Link href={'/auth/register'} className="flex cursor-pointer items-center justify-center gap-1.5 rounded-full bg-zinc-950 px-3 py-2 text-white transition-all duration-200 ease-out hover:bg-zinc-900 ring-0 hover:ring-4 hover:ring-zinc-950/5"
+            <Link href={'/auth/register'} className="flex cursor-pointer items-center justify-center gap-1.5 rounded-full bg-zinc-950  px-3 py-2 text-white ease-out hover:bg-zinc-900 ring-0 hover:ring-4 hover:ring-zinc-950/5"
             >
               <UserRoundPlus size={20} />
               <span>Register</span>
@@ -136,7 +139,7 @@ usePopClose(openOptions,setopenOptions,optionRef)
          className="absolute bg-white dark:bg-black top-full right-1/6 font-rubik w-fit max-w-3/4 p-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1 shadow-lg rounded-xl"
        >
         {navItems.map((nav,index) => (
-         <div key={index} className="rounded-xl cursor-pointer border border-white dark:border-black hover:border-red-600 hover:bg-red-50 ring-0 hover:ring-3 hover:ring-red-700/8 flex items-center justify-start gap-1 p-2 transition-colors duration-300">
+         <div key={index} className="rounded-xl cursor-pointer border border-white hover:border-red-600 hover:bg-red-50 ring-0 hover:ring-3 hover:ring-red-700/8 flex items-center justify-start gap-1 p-2 transition-colors duration-300">
            <div className="p-2 rounded-full">{nav.icon}</div>
            <div className="flex flex-col">
              <span className="font-semibold rounded-2xl p-1 text-md">{nav.label}</span>
@@ -144,7 +147,7 @@ usePopClose(openOptions,setopenOptions,optionRef)
            </div>
          </div>
         ))}
-        <div className="rounded-xl group cursor-pointer border border-white dark:border-black hover:border-red-600 hover:bg-red-50 hover:ring-3 hover:ring-red-700/8 flex gap-1 items-center justify-center p-2 transition-colors duration-300">
+        <div className="rounded-xl group cursor-pointer border border-white hover:border-red-600 hover:bg-red-50 hover:ring-3 hover:ring-red-700/8 flex gap-1 items-center justify-center p-2 transition-colors duration-300">
          <div className="size-14 shrink-0 overflow-hidden rounded-full">
            <Image
              src="/images/amritansh-avatar.png"
