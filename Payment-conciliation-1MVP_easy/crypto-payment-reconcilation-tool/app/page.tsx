@@ -262,7 +262,7 @@ const socialMedia:WalletNameImgType[] = [
           <Activebeep />
           <span>CRYPTO PAYMENT RECONCILIATION</span>
         </div>
-        <div className="HERO_TITLE rounded-lg p-2 font-semibold">
+        <div className="HERO_TITLE rounded-lg p-2 font-semiBold">
           <section className="text-6xl">
             Reconcile Every <span className="text-red-600">Ethereum</span> Crypto Payment 
             <div className="text-red-600 flex items-baseline"><span>Automatically</span><Increasingdot Number={4} Color="red" /></div>

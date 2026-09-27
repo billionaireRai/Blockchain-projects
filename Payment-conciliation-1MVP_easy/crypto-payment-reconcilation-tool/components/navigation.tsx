@@ -14,7 +14,7 @@ import usePopClose from "@/hooks/usePopClose";
 
 export default function NavigationBar() {
   const path = usePathname() ; // initializing usePathname hook...
-  const pathNotAllowed = ['/auth/login','/auth/register'];
+  const pathNotAllowed = ['/auth/'];
   const [openOptions, setopenOptions] = useState<boolean>(false);
   const [loginPop, setloginPop] = useState<boolean>(false);
   const optionRef = useRef<HTMLDivElement>(null);
@@ -75,7 +75,7 @@ const navItems:NavItemsType[] = [
 usePopClose(loginPop,setloginPop,loginPopUpRef) ;
 usePopClose(openOptions,setopenOptions,optionRef) ;
 
-if (pathNotAllowed.includes(path)) return null ;
+if (pathNotAllowed.some((p) =>  path.startsWith(p))) return null ;
 
   return (
     <>

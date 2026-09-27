@@ -23,7 +23,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
       className={`${rubik.variable} h-full antialiased`} // tailwind approach for "font-rubik",
     >
-    <body className="h-full flex flex-col rounded-lg font-rubik">
+    <body className="h-full flex flex-col rounded-lg">
        <Providers>
          <div id="scrollsec" className="relative flex flex-col h-fit overflow-y-auto overflow-x-hidden rounded-lg">
           <NavigationBar />
