@@ -33,17 +33,17 @@ export default function Home() {
   const [LoginHover, setLoginHover] = useState<boolean>(false);
   const Corefeatures : featureType[] = [
     {
-      icon:<LucideVerified size={40} className="text-red-600" />,
+      icon:<LucideVerified size={20} className="text-red-600" />,
       title:'Periodic-Sync',
       explanation:"Periodic real-time transaction monitoring on ethereum blockchain."
     },
     {
-      icon:<LINK size={40} className="text-red-600" />,
+      icon:<LINK size={20} className="text-red-600" />,
       title:'Auto-Reconcile',
       explanation:"Match payments with created invoices & get notified."
     },
     {
-      icon:<BarChart3Icon size={40} className="text-red-600" />,
+      icon:<BarChart3Icon size={20} className="text-red-600" />,
       title:'Get Analytics',
       explanation:'Powerfull statistical insights from your transactions'
     }
@@ -669,7 +669,7 @@ const socialMedia:WalletNameImgType[] = [
         <Image src={Securitytrust} alt="Security-Trust" className="rounded-lg" />
       </motion.div>
      </div>
-     <div className="flex flex-col gap-1 h-150 w-full rounded-lg">
+     <div className="flex flex-col gap-5 w-full rounded-lg">
       <div className="flex gap-1 rounded-lg h-3/4">
         <div className="rounded-lg flex flex-col gap-2 flex-1 p-2">
           <motion.header 
@@ -677,8 +677,8 @@ const socialMedia:WalletNameImgType[] = [
            whileInView={{ x: 0, scale: 1, opacity: 1 }}
            viewport={{ once: true, amount: 0.2 }}
            transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-           className="flex items-center justify-center gap-2 border border-zinc-400 w-fit py-1 px-3 rounded-full text-sm font-semibold text-zinc-400 bg-zinc-50">
-            <StarIcon size={15} />
+           className="flex items-center justify-center gap-2 border border-zinc-400 w-fit py-1 px-3 rounded-full text-xs sm:text-sm font-semibold text-zinc-400 bg-zinc-50">
+            <StarIcon size={15} className="shrink-0" />
             <span>Some popular wallets</span>
           </motion.header>
           <div className="flex flex-col items-start justify-center rounded-lg p-2">
@@ -704,17 +704,20 @@ const socialMedia:WalletNameImgType[] = [
           initial={{ scale:0.9 , opacity:0 }}
           whileInView={{ scale: 1, opacity: 1 }}
           transition={{ duration:0.4 , delay:0.4 }}
-          className="flex items-center justify-center rounded-lg">
-            <span className="bg-yellow-100 rounded-full p-5"><Image src={Wallet} width={130} height={130} alt='wallets' /></span>
+          className="items-center justify-center rounded-lg hidden sm:flex">
+            <span className="bg-yellow-100 rounded-full p-5">
+              <Image src={Wallet} width={130} height={130} alt='wallets' />
+            </span>
           </motion.div>
-          <div className="flex flex-auto items-center justify-evenly rounded-lg">
+          <div className="grid grid-cols-2 lg:flex rounded-lg">
             {popularWallets.map((wallet,idx) => (
               <motion.div 
               initial={{ x: -30, scale: 0.96, opacity: 0 }}
               whileInView={{ x: 0, scale: 1, opacity: 1 }}
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.6, delay: idx * 0.1, ease: [0.22, 1, 0.36, 1] }}
-              data-tooltip-id="crypto-wallet" data-tooltip-content={wallet.name} key={idx} className="flex flex-col cursor-pointer group items-center justify-center gap-1 p-3 rounded-full">
+              data-tooltip-id="crypto-wallet" data-tooltip-content={wallet.name} key={idx} 
+              className="flex flex-col shrink-0 cursor-pointer group items-center justify-center gap-1 p-3 rounded-full">
                 <span className="group-hover:scale-104 transition-transform duration-200"><Image src={wallet.staticimg} width={50} height={50} alt='wallet' /></span>
               </motion.div>
             ))}
@@ -731,18 +734,18 @@ const socialMedia:WalletNameImgType[] = [
              whileInView={{ x: 0, scale: 1, opacity: 1 }}
              viewport={{ once: true, amount: 0.2 }}
              transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-             className="border border-red-600/60 ring-3 ring-red-500/10 text-sm rounded-full text-red-600 flex gap-3 items-center justify-between h-10 w-fit p-4">
+             className="border border-red-600/60 ring-3 text-xs sm:text-sm ring-red-500/10 rounded-full text-red-600 flex gap-3 items-center justify-between h-10 w-fit p-4">
               <Activebeep />
-              <span>ETHEREUM NETWORK ONLY</span>
+              <span>ETHEREUM NETWORK</span>
             </motion.section>
           </div>
           <div className="rounded-lg max-w-3/4">
-            <p className="rounded-lg p-2 text-sm">
+            <p className="rounded-lg p-2 text-xs sm:text-sm">
               Automate, reconcile, and verify every crypto payment across the Ethereum blockchain, exchanges, and multiple wallets—all from one powerful platform. CryptoReconcile brings your payment data into a unified system, helping businesses accurately track transactions, match payments, identify discrepancies, and maintain complete financial visibility without the complexity of manually checking wallets, networks, and transaction records...
             </p>
           </div>
           <div className="flex items-center justify-between rounded-full">
-            <div className="bg-red-100 rounded-full flex w-fit gap-2 p-2 items-center justify-start">
+            <div className="bg-red-100 rounded-xl sm:rounded-full w-fit gap-2 p-2 grid grid-cols-2 sm:flex">
               {Corefeatures.map((f,idx) => (
                 <motion.section 
                 key={idx} 
@@ -750,7 +753,7 @@ const socialMedia:WalletNameImgType[] = [
                 whileInView={{ x: 0, scale: 1, opacity: 1 }}
                 viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.6, delay: idx * 0.1, ease: [0.22, 1, 0.36, 1] }}
-                className="flex gap-2 bg-white cursor-pointer hover:shadow-md transition-shadow duration-300 items-center py-2 px-3 justify-center rounded-full">
+                className="flex gap-2 bg-white cursor-pointer hover:shadow-md text-xs sm:text-sm transition-shadow duration-300 items-center py-2 px-3 justify-center rounded-full">
                   <span>{f.icon}</span>
                   <span>{f.title}</span>
                 </motion.section>
@@ -762,7 +765,7 @@ const socialMedia:WalletNameImgType[] = [
               whileInView={{ x: 0, scale: 1, opacity: 1 }}
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-              className="flex items-center justify-center gap-2 border border-zinc-400 w-fit py-1 px-3 rounded-full text-sm font-semibold text-zinc-400 bg-zinc-50">
+              className="items-center justify-center gap-2 border border-zinc-400 w-fit py-1 px-3 rounded-full text-sm font-semibold text-zinc-400 bg-zinc-50 hidden sm:flex">
                 <List size={15} />
                 <span>Several features</span>
               </motion.section>
@@ -783,7 +786,7 @@ const socialMedia:WalletNameImgType[] = [
               whileInView={{ x: 0, scale: 1, opacity: 1 }}
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              className="flex items-center justify-center gap-2 border border-zinc-400 w-fit py-1 px-3 rounded-full text-sm font-semibold text-zinc-400 bg-zinc-50">
+              className="items-center justify-center gap-2 border border-zinc-400 w-fit py-1 px-3 rounded-full text-sm font-semibold text-zinc-400 bg-zinc-50 hidden sm:flex">
                 <AtSignIcon size={15} />
                 <span>Relevant social media</span>
               </motion.section>
@@ -795,14 +798,14 @@ const socialMedia:WalletNameImgType[] = [
       whileInView={{ y: 0, scale: 1, opacity: 1 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }} 
-      className="flex items-center justify-between rounded-lg p-2 h-1/4">
+      className="flex flex-col sm:flex-row items-center justify-evenly rounded-lg p-2 h-1/4">
        <div className="flex-3 flex items-center justify-start h-full rounded-lg">
         <Image src={logoIcon} alt="paylume.logo.icon" height={60} width={60} className=" rounded-full p-2" />
-        <span className="text-zinc-500 text-sm">{new Date().getFullYear()} Paylume . All rights reserved</span>
+        <span className="text-zinc-500 text-xs sm:text-sm">{new Date().getFullYear()} Paylume . All rights reserved</span>
        </div>
        <div className="text-zinc-500 flex items-center gap-2 justify-center flex-1 h-full rounded-lg">
-        <ShieldCheckIcon size={60} />
-        <span className="text-sm">
+        <ShieldCheckIcon size={30} />
+        <span className="text-xs sm:text-sm">
           your crypto , our priority . Built with security , transperancy and trust !!
         </span>
        </div>

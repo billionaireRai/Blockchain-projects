@@ -1,30 +1,40 @@
 'use client'
 
-import z from 'zod' ;
 import Link from 'next/link';
 import Image from 'next/image' ;
-import { useForm } from "react-hook-form";
+import { useState , useRef } from 'react';
 import { useParams , useSearchParams } from 'next/navigation';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Mail, Lock , LogIn, ArrowLeftIcon, AtSignIcon, RefreshCcw } from "lucide-react"; // lightweight icons
-import { emailRegex } from '@/lib/Regex';
+import { ArrowLeftIcon, AtSignIcon, RefreshCcw } from "lucide-react"; // lightweight icons
 import logo from '@/public/images/paylume-logo.png';
 import emailverfication from '@/public/images/emailverification.jpg' ;
 
 export function Verifyemail () {
-  // applying ZOD validation on form feilds...
-  const loginDataType = z.object({
-    Email:z.string().nonempty("Email is required for notifications").regex(new RegExp(emailRegex)),
-    Password:z.string().min(10).nonempty("Password is required for security")
-  })
+
   const { codeid } = useParams() ;
   const searchParams = useSearchParams() ;
-  const { register , handleSubmit , formState:{ errors , isSubmitting }} = useForm({ resolver:zodResolver(loginDataType) }) ;
+  const inputRef = useRef<HTMLInputElement | null>(null) ;
+  const [Otp, setOtp] = useState<string>("") ;
+  const [Error, setError] = useState<string>("")
+  const [isSubmitting, setisSubmitting] = useState<boolean>(false);
 
-// function for processing registration...
-async function handleLoginLogic() {
+  const handleOtpContainerClick = () => {
+    inputRef.current?.focus();
+  };
+  const handleOtpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, "").slice(0, 6);
+    setOtp(value);
+  };
   
-}
+  // function for email verification logi...
+  async function handleVerifyLogic() {
+    if (Otp.length !== 6) {
+      setError(`Entered only ${Otp.length} digits yet...`) ;
+      return ;
+    }
+
+  }
+
+
   return (
     <div className='flex items-center h-screen rounded-lg p-2 font-rubik'>
       <div className='FORM-SECTION flex flex-col gap-2 justify-start rounded-lg flex-1 h-full p-2'>
@@ -48,19 +58,42 @@ async function handleLoginLogic() {
                we've sent a <b>6-digit</b> verification code to <b>{searchParams.get('email')}</b> . Enter the code below to complete your registration & unlock you paylume account.
              </p>
           </div>
-          <form
-          onSubmit={handleSubmit(handleLoginLogic)}
-          className="w-full max-w-md bg-white p-5 mx-5 rounded-xl">
-            <div className="mb-6 border border-black rounded-lg h-25">
-             
-
+          <form className="w-full relative max-w-md bg-white p-5 mx-5 rounded-xl">
+            <input
+              value={Otp}
+              ref={inputRef}
+              onChange={handleOtpChange}
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              maxLength={6}
+              aria-label="6-digit email verification code"
+              className="absolute inset-0 z-10 w-full h-0 cursor-text opacity-0"
+            />
+            <div onClick={handleOtpContainerClick} className="mb-6 border border-zinc-300 rounded-lg h-25 p-2">
+              <div className="flex items-center justify-evenly rounded-lg h-full">
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className={`flex h-full w-12 items-center justify-center rounded-xl border text-xl font-semibold transition-all duration-200 ${(index === Otp.length) ? "border-zinc-500 ring-4 ring-zinc-200" : "border-zinc-300"}`}
+                  >
+                    {Otp[index] ?? ""}
+                  </div>
+                ))}
+              </div>
             </div>
-            <div 
-              className="flex flex-col items-center justify-center gap-2 rounded-full p-1"
-            >
+            {Error && 
+             <p className="text-red-500 text-xs p-2 flex items-center gap-2">
+              <Image src='/images/warning.png' width={23} height={23} alt="warning"/>
+              <span>
+                {Error}
+                </span>
+             </p>
+            }
+            <div className="flex flex-col items-center justify-center gap-2 rounded-full p-1">
               <button
                 type="submit"
                 disabled={isSubmitting}
+                onClick={handleVerifyLogic}
                 className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 shrink-0 overflow-hidden whitespace-nowrap rounded-full bg-black font-semibold text-white duration-300 hover:opacity-90"
               >
                 <AtSignIcon className="shrink-0" />

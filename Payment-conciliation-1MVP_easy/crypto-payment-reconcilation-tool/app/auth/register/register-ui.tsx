@@ -51,16 +51,16 @@ async function handleRegisterLogic() {
   
 }
   return (
-    <div className='flex items-center h-screen rounded-lg p-2 font-rubik'>
+    <div className='flex flex-col sm:flex-row items-center h-screen rounded-lg p-2 font-rubik'>
       <div className='FORM-SECTION flex flex-col justify-start rounded-lg flex-1 h-full p-2'>
-        <header className='flex items-center justify-between flex-1 rounded-lg'>
+        <header className='flex flex-row items-center justify-evenly sm:justify-between flex-1 rounded-lg'>
           <div className='rounded-full'>
             <Image src={logo} alt="paylume.logo" height={150} width={150} className=" rounded-full" />
           </div>
           <div className='flex items-center justify-center gap-1 rounded-full py-1 px-3'>
-            <span className='text-sm rounded-full p-1'>Already have an account ?</span>
+            <span className='text-xs sm:text-sm rounded-full p-1'>Already have an account ?</span>
             <Link href='/auth/login'>
-              <button className='rounded-lg p-1 w-20 bg-black text-white cursor-pointer hover:opacity-85 hover:shadow-md shadow-sm hover:scale-102 text-sm'>
+              <button className='rounded-lg p-1 w-20 bg-black text-white cursor-pointer hover:opacity-85 hover:shadow-md shadow-sm hover:scale-102 text-xs sm:text-sm'>
                 Log In
               </button>
             </Link>
