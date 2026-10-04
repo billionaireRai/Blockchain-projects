@@ -50,25 +50,96 @@ body {
   background-clip: padding-box;
 }
 
-/* Dark mode */
-.dark::-webkit-scrollbar-thumb {
-  background: #52525b;
-  border: 2px solid transparent;
-  background-clip: padding-box;
+
+.custom-toast {
+  width: 380px !important;
+  min-height: 64px !important;
+
+  margin-bottom: 12px !important;
+  padding: 14px 16px !important;
+
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 14px !important;
+
+  background: rgba(24, 24, 27, 0.96) !important;
+  color: #f4f4f5 !important;
+
+  font-family: inherit !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.25),
+    0 2px 8px rgba(0, 0, 0, 0.15) !important;
+
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  overflow: hidden !important;
 }
 
-.dark::-webkit-scrollbar-thumb:hover {
-  background: #71717a;
-  border: 2px solid transparent;
-  background-clip: padding-box;
+
+.custom-toast-body {
+  margin: 0 !important;
+  padding: 0 !important;
+
+  display: flex !important;
+  align-items: center !important;
+
+  font-size: 14px !important;
+  line-height: 1.5 !important;
 }
 
-/* Firefox */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #a1a1aa transparent;
+.custom-toast-progress {
+  height: 3px !important;
+  bottom: 0 !important;
+
+  opacity: 0.9;
 }
 
-.dark * {
-  scrollbar-color: #52525b transparent;
+.custom-toast .Toastify__close-button {
+  color: #a1a1aa !important;
+  opacity: 0.7 !important;
+
+  transition:
+    color 0.2s ease,
+    opacity 0.2s ease,
+    transform 0.2s ease !important;
+}
+
+.custom-toast .Toastify__close-button:hover {
+  color: #ffffff !important;
+  opacity: 1 !important;
+  transform: scale(1.05);
+}
+
+
+.custom-toast .Toastify__toast-icon {
+  width: 22px !important;
+  margin-right: 10px !important;
+}
+
+
+.custom-toast.Toastify__toast--success {
+  border-color: rgba(34, 197, 94, 0.25) !important;
+}
+
+.custom-toast.Toastify__toast--error {
+  border-color: rgba(239, 68, 68, 0.25) !important;
+}
+
+.custom-toast.Toastify__toast--warning {
+  border-color: rgba(234, 179, 8, 0.25) !important;
+}
+
+.custom-toast.Toastify__toast--info {
+  border-color: rgba(59, 130, 246, 0.25) !important;
+}
+
+@media (max-width: 480px) {
+  .custom-toast {
+    width: calc(100vw - 24px) !important;
+    margin-bottom: 8px !important;
+    border-radius: 12px !important;
+  }
 }

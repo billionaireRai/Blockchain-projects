@@ -2,11 +2,12 @@
 
 import Link from 'next/link';
 import Image from 'next/image' ;
-import { useState , useRef } from 'react';
+import { useState , useRef, useCallback , useMemo } from 'react';
 import { useParams , useSearchParams } from 'next/navigation';
-import { ArrowLeftIcon, AtSignIcon, RefreshCcw } from "lucide-react"; // lightweight icons
+import { ArrowLeftIcon, AtSignIcon, LoaderCircleIcon, RefreshCcw } from "lucide-react"; // lightweight icons
 import logo from '@/public/images/paylume-logo.png';
 import emailverfication from '@/public/images/emailverification.jpg' ;
+import { toast } from 'react-toastify';
 
 export function Verifyemail () {
 
@@ -14,8 +15,9 @@ export function Verifyemail () {
   const searchParams = useSearchParams() ;
   const inputRef = useRef<HTMLInputElement | null>(null) ;
   const [Otp, setOtp] = useState<string>("") ;
-  const [Error, setError] = useState<string>("")
+  const [OtpError, setOtpError] = useState<string>("")
   const [isSubmitting, setisSubmitting] = useState<boolean>(false);
+  const otplen = useMemo(() => Otp.length ,[Otp]) ; // getting entered OTP length...
 
   const handleOtpContainerClick = () => {
     inputRef.current?.focus();
@@ -26,13 +28,18 @@ export function Verifyemail () {
   };
   
   // function for email verification logi...
-  async function handleVerifyLogic() {
-    if (Otp.length !== 6) {
-      setError(`Entered only ${Otp.length} digits yet...`) ;
+  const handleVerifyLogic = useCallback( async () => {
+    setisSubmitting(true) ;
+    if (otplen !== 6) {
+      setisSubmitting(false);
+      setOtpError(`Entered only ${otplen} digits yet...`) ;
       return ;
     }
+    toast.success(`${Otp} verified successfully !`,{ position:'bottom-right' }) ;
+    setisSubmitting(false);
+    return ;
 
-  }
+  },[Otp])
 
 
   return (
@@ -58,7 +65,7 @@ export function Verifyemail () {
                we've sent a <b>6-digit</b> verification code to <b>{searchParams.get('email')}</b> . Enter the code below to complete your registration & unlock you paylume account.
              </p>
           </div>
-          <form className="w-full relative max-w-md bg-white p-5 mx-5 rounded-xl">
+          <form onSubmit={(e) => { e.preventDefault()  ; handleVerifyLogic() }} className="w-full relative max-w-md bg-white p-5 mx-5 rounded-xl">
             <input
               value={Otp}
               ref={inputRef}
@@ -81,11 +88,11 @@ export function Verifyemail () {
                 ))}
               </div>
             </div>
-            {Error && 
+            {OtpError && 
              <p className="text-red-500 text-xs p-2 flex items-center gap-2">
               <Image src='/images/warning.png' width={23} height={23} alt="warning"/>
               <span>
-                {Error}
+                {OtpError}
                 </span>
              </p>
             }
@@ -93,11 +100,17 @@ export function Verifyemail () {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                onClick={handleVerifyLogic}
-                className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 shrink-0 overflow-hidden whitespace-nowrap rounded-full bg-black font-semibold text-white duration-300 hover:opacity-90"
+                className={`flex h-12 w-full items-center justify-center gap-2 shrink-0 overflow-hidden whitespace-nowrap rounded-full bg-black font-semibold text-white duration-300 ${isSubmitting ? 'cursor-not-allowed opacity-80' : 'cursor-pointer hover:opacity-100'}`}
               >
-                <AtSignIcon className="shrink-0" />
-                <span className="whitespace-nowrap">Verify Email</span>
+                {isSubmitting ? (
+                  <LoaderCircleIcon className='animate-spin'/>
+                 ) : (
+                  <>
+                   <AtSignIcon className="shrink-0" />
+                   <span className="whitespace-nowrap">Verify Email</span>
+                  </>
+                 )
+                }
               </button>
               <div className='text-sm flex items-center justify-center gap-2 w-full'>
                 <span>Did'nt recieved the code ?</span>
