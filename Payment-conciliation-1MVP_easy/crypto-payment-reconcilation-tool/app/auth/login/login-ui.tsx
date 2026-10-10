@@ -49,7 +49,7 @@ async function handleLoginLogic() {
   
 }
   return (
-    <div className='flex items-center h-screen rounded-lg p-2 font-rubik'>
+    <div className='flex flex-col md:flex-row items-center gap-10 h-screen rounded-lg p-2 font-rubik'>
       <div className='HERO-SECTION flex flex-col items-center justify-center rounded-lg p-2 flex-1 h-full'>
         <div className='flex items-center justify-center min-w-3/5 flex-2 rounded-lg'>
           <Image src={LoginHero} alt='Login' className='h-full w-full' />

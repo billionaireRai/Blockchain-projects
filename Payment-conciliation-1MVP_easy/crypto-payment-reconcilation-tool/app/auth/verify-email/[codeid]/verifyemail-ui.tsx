@@ -43,10 +43,10 @@ export function Verifyemail () {
 
 
   return (
-    <div className='flex items-center h-screen rounded-lg p-2 font-rubik'>
+    <div className='flex flex-col md:flex-row items-center h-screen rounded-lg p-2 font-rubik'>
       <div className='FORM-SECTION flex flex-col gap-2 justify-start rounded-lg flex-1 h-full p-2'>
          <header className='flex items-center justify-start rounded-lg'>
-          <div className='flex items-center justify-center gap-1 rounded-full w-1/4'>
+          <div className='flex items-center w-full justify-start gap-1 rounded-full'>
             <Link href='/' className='flex items-center justify-center hover:bg-zinc-100 rounded-full p-2'>
               <button className='rounded-full flex items-center justify-center p-1 bg-black text-white cursor-pointer hover:opacity-85 text-sm'>
                 <ArrowLeftIcon size={15} />

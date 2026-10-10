@@ -51,7 +51,7 @@ async function handleRegisterLogic() {
   
 }
   return (
-    <div className='flex flex-col sm:flex-row items-center h-screen rounded-lg p-2 font-rubik'>
+    <div className='flex flex-col sm:flex-row items-center h-screen rounded-lg p-2 gap-10 sm:gap-0 font-rubik'>
       <div className='FORM-SECTION flex flex-col justify-start rounded-lg flex-1 h-full p-2'>
         <header className='flex flex-row items-center justify-evenly sm:justify-between flex-1 rounded-lg'>
           <div className='rounded-full'>
