@@ -1,0 +1,456 @@
+// Defining enum type for fields...
+
+enum NetworkEnvironment {
+  MAINNET
+  TESTNET
+}
+
+enum NetworkStatus {
+  ACTIVE
+  INACTIVE
+  MAINTENANCE
+}
+
+enum TransactionStatus { 
+  PENDING 
+  PAID 
+  FAILED 
+  REVERTED 
+}
+
+enum TransactionType { 
+  TRANSFER 
+  PAYMENT 
+  REFUND 
+  SWAP 
+  DEPOSIT 
+  WITHDRAWAL 
+}
+
+enum InvoiceType { 
+  PENDING 
+  PAID 
+  PARTIAL
+  OVERPAID 
+  EXPIRED
+  CANCELLED
+  REFUNDED
+}
+
+enum WalletStatus {
+  ACTIVE 
+  INACTIVE
+  SUSPENDED
+  ARCHIVED
+}
+
+enum WalletRoles {
+  DEPOSIT
+  PAYOUT
+  TREASURY
+  HOT
+  COLD
+}
+
+enum NonceUses {
+  WALLET_AUTHENTICATION
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}
+
+enum NonceStatus {
+  UNUSED
+  USED
+  EXPIRED
+  INVALID
+}
+
+enum AuthMethods {
+  WALLET
+  EMAIL
+}
+
+enum ReconciliationStatus {
+  PENDING  
+  MATCHED 
+  PARTIAL
+  MISMATCHED 
+  EXCEPTION
+}
+
+enum WorkspaceStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  DELETED
+}
+
+enum WorkspaceMemberRoles {
+  OWNER
+  ADMIN
+  FINANCER
+  VIEWER
+}
+
+enum MemberStatus {
+  INVITED
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  REMOVED
+}
+
+enum AssetType {
+  NATIVE
+  TOKEN
+}
+
+enum AssetStatus {
+  ACTIVE
+  INACTIVE
+  DEPRECATED
+}
+
+enum AuditAction {
+  // Authentication & Access
+  LOGIN
+  LOGOUT
+  LOGIN_FAILED
+  PASSWORD_CHANGED
+  PASSWORD_RESET
+  MFA_ENABLED
+  MFA_DISABLED
+
+  // Workspace
+  WORKSPACE_CREATED
+  WORKSPACE_UPDATED
+  WORKSPACE_DELETED
+  WORKSPACE_SUSPENDED
+  WORKSPACE_REACTIVATED
+
+  // Workspace Members
+  MEMBER_INVITED
+  MEMBER_INVITATION_ACCEPTED
+  MEMBER_INVITATION_REVOKED
+  MEMBER_ROLE_UPDATED
+  MEMBER_SUSPENDED
+  MEMBER_REACTIVATED
+  MEMBER_REMOVED
+
+  // Wallets
+  WALLET_CREATED
+  WALLET_UPDATED
+  WALLET_DEACTIVATED
+  WALLET_ARCHIVED
+
+  // Networks & Assets
+  NETWORK_CREATED
+  NETWORK_UPDATED
+  NETWORK_STATUS_CHANGED
+  ASSET_CREATED
+  ASSET_UPDATED
+  ASSET_STATUS_CHANGED
+
+  // Transactions & Payments
+  PAYMENT_CREATED
+  PAYMENT_UPDATED
+  PAYMENT_CONFIRMED
+  PAYMENT_FAILED
+  PAYMENT_EXPIRED
+  TRANSACTION_DETECTED
+  TRANSACTION_CONFIRMED
+  TRANSACTION_FAILED
+  RECONCILIATION_STARTED
+  RECONCILIATION_COMPLETED
+  RECONCILIATION_FAILED
+  DISCREPANCY_DETECTED
+  DISCREPANCY_RESOLVED
+
+  // Payouts
+  PAYOUT_CREATED
+  PAYOUT_APPROVED
+  PAYOUT_REJECTED
+  PAYOUT_PROCESSED
+  PAYOUT_FAILED
+  PAYOUT_CANCELLED
+
+  // Security & Configuration
+  PERMISSION_DENIED
+  SETTINGS_UPDATED
+  SECURITY_ALERT
+  SUSPICIOUS_ACTIVITY_DETECTED
+
+  // Administrative
+  DATA_EXPORTED
+  MANUAL_ADJUSTMENT
+}
+
+enum AuditOutcome {
+  SUCCESS
+  FAILURE
+  DENIED
+}
+
+model Transactions {
+  recordId             String               @id @default(uuid())
+
+  // Blockchain details
+  networkId            String                
+  network              Networks?            @relation(fields: [networkId], references: [recordId])
+
+  txHash               String
+  blockNumber          BigInt?
+  blockHash            String?
+
+  // Wallet details
+  from                 String
+  to                   String
+
+  // Token details
+  tokenAddress         String?
+  tokenSymbol          String
+  tokenDecimals        Int
+
+  // Financial details
+  amount               String
+  gasUsed              String?
+  gasPrice             String?
+
+  // Transaction metadata
+  type                 TransactionType      @default(TRANSFER)
+  status               TransactionStatus    @default(PENDING)
+
+  // Timestamps
+  blockTimestamp       DateTime?
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+
+  @@unique([txHash])
+  @@index([from])
+  @@index([to])
+  @@index([status])
+  @@index([blockNumber])
+}
+
+model Invoices {
+    recordId           String               @id @default(uuid())
+
+    from               String
+    to                 String
+    
+    expectedAmount     String 
+
+    workspaceId        String 
+    workspace          Workspaces?           @relation(fields: [workspaceId], references: [recordId])
+    networkId          String                
+    network            Networks?             @relation(fields: [networkId], references: [recordId])
+
+    tokenAddress       String?
+    tokenSymbol        String
+    tokenDecimals      Int
+
+    status             InvoiceType          @default(PENDING) 
+    expiry             DateTime
+
+    reconciliation     Reconciliations[]
+
+    createdAt          DateTime             @default(now())
+    updatedAt          DateTime             @updatedAt
+    
+
+    @@index([from])
+    @@index([to])
+    @@index([status])
+}
+
+
+model Networks {
+  recordId         String            @id @default(uuid())
+  name             String
+  slug             String            @unique
+  chainId          Int
+  environment      NetworkEnvironment
+  status           NetworkStatus     @default(ACTIVE)
+
+  currencyName     String
+  currencySymbol   String
+  currencyDecimals Int
+
+  wallets          Wallets[]
+  transactions     Transactions[]
+  Invoices         Invoices[]
+  assets           Assets[]
+
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@unique([chainId, environment])
+}
+
+
+model Wallets {
+    recordId           String                @id @default(uuid())
+    
+    workspaceId        String                
+    address            String
+    status             WalletStatus          @default(ACTIVE)
+
+    label              String                
+    walletRole         WalletRoles           @default(DEPOSIT)
+
+    networkId          String                
+    network            Networks?             @relation(fields: [networkId], references: [recordId])
+
+
+    createdAt          DateTime              @default(now())
+    updatedAt          DateTime              @updatedAt
+
+    @@unique([workspaceId,address])
+
+}
+
+model Nonces {
+    recordId           String                @id @default(uuid())
+
+    nonce              String                
+    usedFor            NonceUses             @default(WALLET_AUTHENTICATION)
+    walletAdd          String?
+    status             NonceStatus           @default(UNUSED)
+
+    expiry             DateTime              
+
+    createdAt          DateTime              @default(now())
+    updatedAt          DateTime              @updatedAt
+
+    @@index([expiry])
+}
+
+
+model User {
+    recordId           String                @id @default(uuid())
+
+    username           String                @unique 
+    email              String                @unique
+    authMethod         AuthMethods           @default(EMAIL)
+
+    members            WSmember[]
+    auditlogs          Auditlogs[]
+
+    createdAt          DateTime              @default(now())
+    updatedAt          DateTime              @updatedAt
+
+    @@index([email,username])
+}
+
+model Reconciliations {
+    recordId           String                @id @default(uuid())
+    
+    invoiceId          String                
+    invoice            Invoices?             @relation(fields: [invoiceId], references: [recordId])
+
+    expectedAmount     String 
+    recievedAmount     String 
+
+    difference         String                @default("0")
+
+    status             ReconciliationStatus  @default(PENDING)
+
+    resolved           Boolean               @default(false)
+
+    createdAt          DateTime              @default(now())
+    updatedAt          DateTime              @updatedAt
+
+    @@index([invoiceId])
+    @@index([status])
+    @@index([difference])
+}
+
+model Workspaces {
+    recordId           String                @id @default(uuid())
+    
+    name               String                @unique
+    slug               String 
+
+
+    status             WorkspaceStatus       @default(ACTIVE)
+
+    members            WSmember[]
+    invoices           Invoices[]
+    auditlogs          Auditlogs[]
+
+    createdAt          DateTime              @default(now())
+    updatedAt          DateTime              @updatedAt
+
+    @@index([slug])
+}
+
+model WSmember {
+    recordId           String                @id @default(uuid())
+
+    workspaceId        String           
+    workspace          Workspaces?           @relation(fields: [workspaceId], references: [recordId])   
+
+    userId             String
+    user               User?                 @relation(fields: [userId], references: [recordId])  
+
+    role               WorkspaceMemberRoles  @default(VIEWER)
+
+    status             MemberStatus          @default(INACTIVE)
+
+    createdAt          DateTime              @default(now())
+    updatedAt          DateTime              @updatedAt
+
+    @@unique([workspaceId, userId])
+    @@index([workspaceId, status])
+    @@index([userId, status])
+}
+
+model Assets {
+    recordId        String     @id @default(uuid())
+
+    name            String
+    symbol          String
+    slug            String
+
+    type            AssetType
+    status          AssetStatus @default(ACTIVE)
+
+    decimals        Int
+
+    contractAdd     String?
+
+    networkId       String     
+    network         Networks   @relation(fields: [networkId], references: [recordId])
+
+    createdAt       DateTime   @default(now())
+    updatedAt       DateTime   @updatedAt
+
+    @@unique([networkId, slug])
+    @@index([networkId, status])
+    @@index([symbol])
+}
+
+model Auditlogs {
+  id          String       @id @default(uuid())
+  action      AuditAction
+  outcome     AuditOutcome
+
+  actorId     String?
+  actor       User?        @relation(fields: [actorId], references: [recordId])  
+  workspaceId String?    
+  workspace   Workspaces?  @relation(fields: [workspaceId], references: [recordId])  
+
+  targetType  String?
+  targetId    String?
+
+  ipAddress   String?
+  userAgent   String?
+
+  metadata    Json?
+
+  createdAt   DateTime     @default(now())
+
+  @@index([workspaceId, createdAt])
+  @@index([actorId, createdAt])
+  @@index([action, createdAt])
+}
