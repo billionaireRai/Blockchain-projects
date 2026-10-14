@@ -1,3 +1,12 @@
+// generator and datsource block...
+generator client {
+  provider = "prisma-client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
 // Defining enum type for fields...
 
 enum NetworkEnvironment {
@@ -191,8 +200,19 @@ enum AuditOutcome {
   DENIED
 }
 
+enum SearchEntityType {
+  USER
+  WALLET
+  INVOICE
+  WORKSPACE
+  AUDITLOGS
+  TRANSACTION
+  RECONCILIATION
+  SEMANTIC
+}
+
 model Transactions {
-  recordId             String               @id @default(uuid())
+  recordId             String               @id @default("txn_`${uuid()}`")
 
   // Blockchain details
   networkId            String                
@@ -220,6 +240,8 @@ model Transactions {
   type                 TransactionType      @default(TRANSFER)
   status               TransactionStatus    @default(PENDING)
 
+  embedding            Unsupported("vector(768)")?
+
   // Timestamps
   blockTimestamp       DateTime?
   createdAt            DateTime             @default(now())
@@ -233,7 +255,7 @@ model Transactions {
 }
 
 model Invoices {
-    recordId           String               @id @default(uuid())
+    recordId           String               @id @default("inv_`${uuid()}`")
 
     from               String
     to                 String
@@ -252,6 +274,8 @@ model Invoices {
     status             InvoiceType          @default(PENDING) 
     expiry             DateTime
 
+    embedding          Unsupported("vector(768)")?
+
     reconciliation     Reconciliations[]
 
     createdAt          DateTime             @default(now())
@@ -265,7 +289,7 @@ model Invoices {
 
 
 model Networks {
-  recordId         String            @id @default(uuid())
+  recordId         String            @id @default("net_`${uuid()}`")
   name             String
   slug             String            @unique
   chainId          Int
@@ -289,7 +313,7 @@ model Networks {
 
 
 model Wallets {
-    recordId           String                @id @default(uuid())
+    recordId           String                @id @default("wal_`${uuid()}`")
     
     workspaceId        String                
     address            String
@@ -310,7 +334,7 @@ model Wallets {
 }
 
 model Nonces {
-    recordId           String                @id @default(uuid())
+    recordId           String                @id @default("non_`${uuid()}`")
 
     nonce              String                
     usedFor            NonceUses             @default(WALLET_AUTHENTICATION)
@@ -327,7 +351,7 @@ model Nonces {
 
 
 model User {
-    recordId           String                @id @default(uuid())
+    recordId           String                @id @default("usr_`${uuid()}`")
 
     username           String                @unique 
     email              String                @unique
@@ -335,6 +359,7 @@ model User {
 
     members            WSmember[]
     auditlogs          Auditlogs[]
+    searches           Searchs[]
 
     createdAt          DateTime              @default(now())
     updatedAt          DateTime              @updatedAt
@@ -343,7 +368,7 @@ model User {
 }
 
 model Reconciliations {
-    recordId           String                @id @default(uuid())
+    recordId           String                @id @default("rec_`${uuid()}`")
     
     invoiceId          String                
     invoice            Invoices?             @relation(fields: [invoiceId], references: [recordId])
@@ -357,6 +382,8 @@ model Reconciliations {
 
     resolved           Boolean               @default(false)
 
+    embedding          Unsupported("vector(768)")?
+
     createdAt          DateTime              @default(now())
     updatedAt          DateTime              @updatedAt
 
@@ -366,7 +393,7 @@ model Reconciliations {
 }
 
 model Workspaces {
-    recordId           String                @id @default(uuid())
+    recordId           String                @id @default("wsp_`${uuid()}`")
     
     name               String                @unique
     slug               String 
@@ -374,9 +401,12 @@ model Workspaces {
 
     status             WorkspaceStatus       @default(ACTIVE)
 
+    embedding          Unsupported("vector(1536)")?
+
     members            WSmember[]
     invoices           Invoices[]
     auditlogs          Auditlogs[]
+    searches           Searchs[]
 
     createdAt          DateTime              @default(now())
     updatedAt          DateTime              @updatedAt
@@ -385,7 +415,7 @@ model Workspaces {
 }
 
 model WSmember {
-    recordId           String                @id @default(uuid())
+    recordId           String                @id @default("mem_`${uuid()}`")
 
     workspaceId        String           
     workspace          Workspaces?           @relation(fields: [workspaceId], references: [recordId])   
@@ -406,7 +436,7 @@ model WSmember {
 }
 
 model Assets {
-    recordId        String     @id @default(uuid())
+    recordId        String     @id @default("ass_`${uuid()}`")
 
     name            String
     symbol          String
@@ -431,7 +461,7 @@ model Assets {
 }
 
 model Auditlogs {
-  id          String       @id @default(uuid())
+  id          String       @id @default("aud_`${uuid()}`")
   action      AuditAction
   outcome     AuditOutcome
 
@@ -447,10 +477,31 @@ model Auditlogs {
   userAgent   String?
 
   metadata    Json?
+  embedding   Unsupported("vector(768)")?
 
   createdAt   DateTime     @default(now())
 
   @@index([workspaceId, createdAt])
   @@index([actorId, createdAt])
   @@index([action, createdAt])
+}
+
+model Searchs {
+  recordId    String            @id @default("scr_`${uuid()}`")
+
+  userId      String? 
+  user        User?             @relation(fields: [userId], references: [recordId]) 
+  workspaceId String?
+  workspace   Workspaces?       @relation(fields: [workspaceId], references: [recordId]) 
+
+  entityId    String
+  entityType  SearchEntityType 
+
+  content     String
+
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@index([workspaceId, entityType])
+  @@index([entityType, entityId])
 }
