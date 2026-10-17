@@ -1,0 +1,2 @@
+
+export type TimezonesOptions =   "UTC" | "Asia/Kolkata" | "Asia/Dubai" | "Asia/Singapore" | "Asia/Hong_Kong" | "Asia/Tokyo" | "Europe/London" | "Europe/Berlin" | "America/New_York" | "America/Chicago" | "America/Los_Angeles" | "America/Toronto" | "Australia/Sydney" ;

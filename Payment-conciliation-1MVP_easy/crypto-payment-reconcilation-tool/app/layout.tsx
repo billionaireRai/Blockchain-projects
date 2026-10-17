@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import Providers from "./provider";
 import NavigationBar from "@/components/Navigation";
+import UnAuthorize from "@/components/UnAuthorizeWrapper";
 import { Rubik } from "next/font/google";
 import "./globals.css";
 
@@ -25,10 +26,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
     <body className="h-full flex flex-col rounded-lg">
        <Providers>
+        <UnAuthorize>
          <div id="scrollsec" className="relative flex flex-col h-fit overflow-y-auto overflow-x-hidden rounded-lg">
           <NavigationBar />
           {children}
          </div>
+        </UnAuthorize>
        </Providers>
     </body>
     </html>

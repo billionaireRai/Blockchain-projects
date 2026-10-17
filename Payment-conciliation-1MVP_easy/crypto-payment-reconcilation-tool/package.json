@@ -29,7 +29,8 @@
     "react-toastify": "^11.1.0",
     "react-tooltip": "^6.0.8",
     "web3": "^4.16.0",
-    "zod": "^4.6.5"
+    "zod": "^4.6.5",
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

@@ -1,6 +1,7 @@
 // generator and datsource block...
 generator client {
   provider = "prisma-client"
+  output = "../src/generated"
 }
 
 datasource db {
@@ -20,34 +21,34 @@ enum NetworkStatus {
   MAINTENANCE
 }
 
-enum TransactionStatus { 
-  PENDING 
-  PAID 
-  FAILED 
-  REVERTED 
+enum TransactionStatus {
+  PENDING
+  PAID
+  FAILED
+  REVERTED
 }
 
-enum TransactionType { 
-  TRANSFER 
-  PAYMENT 
-  REFUND 
-  SWAP 
-  DEPOSIT 
-  WITHDRAWAL 
+enum TransactionType {
+  TRANSFER
+  PAYMENT
+  REFUND
+  SWAP
+  DEPOSIT
+  WITHDRAWAL
 }
 
-enum InvoiceType { 
-  PENDING 
-  PAID 
+enum InvoiceType {
+  PENDING
+  PAID
   PARTIAL
-  OVERPAID 
+  OVERPAID
   EXPIRED
   CANCELLED
   REFUNDED
 }
 
 enum WalletStatus {
-  ACTIVE 
+  ACTIVE
   INACTIVE
   SUSPENDED
   ARCHIVED
@@ -80,10 +81,10 @@ enum AuthMethods {
 }
 
 enum ReconciliationStatus {
-  PENDING  
-  MATCHED 
+  PENDING
+  MATCHED
   PARTIAL
-  MISMATCHED 
+  MISMATCHED
   EXCEPTION
 }
 
@@ -99,6 +100,7 @@ enum WorkspaceMemberRoles {
   ADMIN
   FINANCER
   VIEWER
+  GUEST
 }
 
 enum MemberStatus {
@@ -212,40 +214,40 @@ enum SearchEntityType {
 }
 
 model Transactions {
-  recordId             String               @id @default("txn_`${uuid()}`")
+  recordId String @id @default("txn_`${uuid()}`")
 
   // Blockchain details
-  networkId            String                
-  network              Networks?            @relation(fields: [networkId], references: [recordId])
+  networkId String
+  network   Networks? @relation(fields: [networkId], references: [recordId])
 
-  txHash               String
-  blockNumber          BigInt?
-  blockHash            String?
+  txHash      String
+  blockNumber BigInt?
+  blockHash   String?
 
   // Wallet details
-  from                 String
-  to                   String
+  from String
+  to   String
 
   // Token details
-  tokenAddress         String?
-  tokenSymbol          String
-  tokenDecimals        Int
+  tokenAddress  String?
+  tokenSymbol   String
+  tokenDecimals Int
 
   // Financial details
-  amount               String
-  gasUsed              String?
-  gasPrice             String?
+  amount   String
+  gasUsed  String?
+  gasPrice String?
 
   // Transaction metadata
-  type                 TransactionType      @default(TRANSFER)
-  status               TransactionStatus    @default(PENDING)
+  type   TransactionType   @default(TRANSFER)
+  status TransactionStatus @default(PENDING)
 
-  embedding            Unsupported("vector(768)")?
+  embedding Unsupported("vector(768)")?
 
   // Timestamps
-  blockTimestamp       DateTime?
-  createdAt            DateTime             @default(now())
-  updatedAt            DateTime             @updatedAt
+  blockTimestamp DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   @@unique([txHash])
   @@index([from])
@@ -255,231 +257,227 @@ model Transactions {
 }
 
 model Invoices {
-    recordId           String               @id @default("inv_`${uuid()}`")
+  recordId String @id @default("inv_`${uuid()}`")
 
-    from               String
-    to                 String
-    
-    expectedAmount     String 
+  from String
+  to   String
 
-    workspaceId        String 
-    workspace          Workspaces?           @relation(fields: [workspaceId], references: [recordId])
-    networkId          String                
-    network            Networks?             @relation(fields: [networkId], references: [recordId])
+  expectedAmount String
 
-    tokenAddress       String?
-    tokenSymbol        String
-    tokenDecimals      Int
+  workspaceId String
+  workspace   Workspaces? @relation(fields: [workspaceId], references: [recordId])
+  networkId   String
+  network     Networks?   @relation(fields: [networkId], references: [recordId])
 
-    status             InvoiceType          @default(PENDING) 
-    expiry             DateTime
+  tokenAddress  String?
+  tokenSymbol   String
+  tokenDecimals Int
 
-    embedding          Unsupported("vector(768)")?
+  status InvoiceType @default(PENDING)
+  expiry DateTime
 
-    reconciliation     Reconciliations[]
+  embedding Unsupported("vector(768)")?
 
-    createdAt          DateTime             @default(now())
-    updatedAt          DateTime             @updatedAt
-    
+  reconciliation Reconciliations[]
 
-    @@index([from])
-    @@index([to])
-    @@index([status])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([from])
+  @@index([to])
+  @@index([status])
 }
 
-
 model Networks {
-  recordId         String            @id @default("net_`${uuid()}`")
-  name             String
-  slug             String            @unique
-  chainId          Int
-  environment      NetworkEnvironment
-  status           NetworkStatus     @default(ACTIVE)
+  recordId    String             @id @default("net_`${uuid()}`")
+  name        String
+  slug        String             @unique
+  chainId     Int
+  environment NetworkEnvironment
+  status      NetworkStatus      @default(ACTIVE)
 
   currencyName     String
   currencySymbol   String
   currencyDecimals Int
 
-  wallets          Wallets[]
-  transactions     Transactions[]
-  Invoices         Invoices[]
-  assets           Assets[]
+  wallets      Wallets[]
+  transactions Transactions[]
+  Invoices     Invoices[]
+  assets       Assets[]
 
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([chainId, environment])
 }
 
-
 model Wallets {
-    recordId           String                @id @default("wal_`${uuid()}`")
-    
-    workspaceId        String                
-    address            String
-    status             WalletStatus          @default(ACTIVE)
+  recordId String @id @default("wal_`${uuid()}`")
 
-    label              String                
-    walletRole         WalletRoles           @default(DEPOSIT)
+  workspaceId String
+  address     String
+  status      WalletStatus @default(ACTIVE)
 
-    networkId          String                
-    network            Networks?             @relation(fields: [networkId], references: [recordId])
+  label      String
+  walletRole WalletRoles @default(DEPOSIT)
 
+  networkId String
+  network   Networks? @relation(fields: [networkId], references: [recordId])
 
-    createdAt          DateTime              @default(now())
-    updatedAt          DateTime              @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@unique([workspaceId,address])
-
+  @@unique([workspaceId, address, networkId])
 }
 
 model Nonces {
-    recordId           String                @id @default("non_`${uuid()}`")
+  recordId String @id @default("non_`${uuid()}`")
 
-    nonce              String                
-    usedFor            NonceUses             @default(WALLET_AUTHENTICATION)
-    walletAdd          String?
-    status             NonceStatus           @default(UNUSED)
+  nonce     String
+  usedFor   NonceUses   @default(WALLET_AUTHENTICATION)
+  walletAdd String?
+  status    NonceStatus @default(UNUSED)
 
-    expiry             DateTime              
+  expiry DateTime
 
-    createdAt          DateTime              @default(now())
-    updatedAt          DateTime              @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@index([expiry])
+  @@index([expiry])
 }
 
-
 model User {
-    recordId           String                @id @default("usr_`${uuid()}`")
+  recordId String @id @default("usr_`${uuid()}`")
 
-    username           String                @unique 
-    email              String                @unique
-    authMethod         AuthMethods           @default(EMAIL)
+  username      String @unique
+  email         String @unique
+  profilepic    String @unique
+  profilebanner String @unique
 
-    members            WSmember[]
-    auditlogs          Auditlogs[]
-    searches           Searchs[]
+  authMethod AuthMethods @default(EMAIL)
 
-    createdAt          DateTime              @default(now())
-    updatedAt          DateTime              @updatedAt
+  members   WSmember[]
+  auditlogs Auditlogs[]
+  searches  Searchs[]
 
-    @@index([email,username])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email, username])
 }
 
 model Reconciliations {
-    recordId           String                @id @default("rec_`${uuid()}`")
-    
-    invoiceId          String                
-    invoice            Invoices?             @relation(fields: [invoiceId], references: [recordId])
+  recordId String @id @default("rec_`${uuid()}`")
 
-    expectedAmount     String 
-    recievedAmount     String 
+  invoiceId String
+  invoice   Invoices? @relation(fields: [invoiceId], references: [recordId])
 
-    difference         String                @default("0")
+  expectedAmount String
+  recievedAmount String
 
-    status             ReconciliationStatus  @default(PENDING)
+  difference String @default("0")
 
-    resolved           Boolean               @default(false)
+  status ReconciliationStatus @default(PENDING)
 
-    embedding          Unsupported("vector(768)")?
+  resolved Boolean @default(false)
 
-    createdAt          DateTime              @default(now())
-    updatedAt          DateTime              @updatedAt
+  embedding Unsupported("vector(768)")?
 
-    @@index([invoiceId])
-    @@index([status])
-    @@index([difference])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([invoiceId])
+  @@index([status])
+  @@index([difference])
 }
 
 model Workspaces {
-    recordId           String                @id @default("wsp_`${uuid()}`")
-    
-    name               String                @unique
-    slug               String 
+  recordId String @id @default("wsp_`${uuid()}`")
 
+  name String @unique
+  slug String
 
-    status             WorkspaceStatus       @default(ACTIVE)
+  status WorkspaceStatus @default(ACTIVE)
 
-    embedding          Unsupported("vector(1536)")?
+  embedding Unsupported("vector(1536)")?
 
-    members            WSmember[]
-    invoices           Invoices[]
-    auditlogs          Auditlogs[]
-    searches           Searchs[]
+  members   WSmember[]
+  invoices  Invoices[]
+  auditlogs Auditlogs[]
+  searches  Searchs[]
 
-    createdAt          DateTime              @default(now())
-    updatedAt          DateTime              @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@index([slug])
+  @@index([slug])
 }
 
 model WSmember {
-    recordId           String                @id @default("mem_`${uuid()}`")
+  recordId String @id @default("mem_`${uuid()}`")
 
-    workspaceId        String           
-    workspace          Workspaces?           @relation(fields: [workspaceId], references: [recordId])   
+  workspaceId String
+  workspace   Workspaces? @relation(fields: [workspaceId], references: [recordId])
 
-    userId             String
-    user               User?                 @relation(fields: [userId], references: [recordId])  
+  userId String
+  user   User?  @relation(fields: [userId], references: [recordId])
 
-    role               WorkspaceMemberRoles  @default(VIEWER)
+  role WorkspaceMemberRoles @default(VIEWER)
 
-    status             MemberStatus          @default(INACTIVE)
+  status MemberStatus @default(INACTIVE)
 
-    createdAt          DateTime              @default(now())
-    updatedAt          DateTime              @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@unique([workspaceId, userId])
-    @@index([workspaceId, status])
-    @@index([userId, status])
+  @@unique([workspaceId, userId])
+  @@index([workspaceId, status])
+  @@index([userId, status])
 }
 
 model Assets {
-    recordId        String     @id @default("ass_`${uuid()}`")
+  recordId String @id @default("ass_`${uuid()}`")
 
-    name            String
-    symbol          String
-    slug            String
+  name   String
+  symbol String
+  slug   String
 
-    type            AssetType
-    status          AssetStatus @default(ACTIVE)
+  type   AssetType
+  status AssetStatus @default(ACTIVE)
 
-    decimals        Int
+  decimals Int
 
-    contractAdd     String?
+  contractAdd String?
 
-    networkId       String     
-    network         Networks   @relation(fields: [networkId], references: [recordId])
+  networkId String
+  network   Networks @relation(fields: [networkId], references: [recordId])
 
-    createdAt       DateTime   @default(now())
-    updatedAt       DateTime   @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@unique([networkId, slug])
-    @@index([networkId, status])
-    @@index([symbol])
+  @@unique([networkId, slug])
+  @@index([networkId, status])
+  @@index([symbol])
 }
 
 model Auditlogs {
-  id          String       @id @default("aud_`${uuid()}`")
-  action      AuditAction
-  outcome     AuditOutcome
+  id      String       @id @default("aud_`${uuid()}`")
+  action  AuditAction
+  outcome AuditOutcome
 
   actorId     String?
-  actor       User?        @relation(fields: [actorId], references: [recordId])  
-  workspaceId String?    
-  workspace   Workspaces?  @relation(fields: [workspaceId], references: [recordId])  
+  actor       User?       @relation(fields: [actorId], references: [recordId])
+  workspaceId String?
+  workspace   Workspaces? @relation(fields: [workspaceId], references: [recordId])
 
-  targetType  String?
-  targetId    String?
+  targetType String?
+  targetId   String?
 
-  ipAddress   String?
-  userAgent   String?
+  ipAddress String?
+  userAgent String?
 
-  metadata    Json?
-  embedding   Unsupported("vector(768)")?
+  metadata  Json?
+  embedding Unsupported("vector(768)")?
 
-  createdAt   DateTime     @default(now())
+  createdAt DateTime @default(now())
 
   @@index([workspaceId, createdAt])
   @@index([actorId, createdAt])
@@ -487,20 +485,20 @@ model Auditlogs {
 }
 
 model Searchs {
-  recordId    String            @id @default("scr_`${uuid()}`")
+  recordId String @id @default("scr_`${uuid()}`")
 
-  userId      String? 
-  user        User?             @relation(fields: [userId], references: [recordId]) 
+  userId      String?
+  user        User?       @relation(fields: [userId], references: [recordId])
   workspaceId String?
-  workspace   Workspaces?       @relation(fields: [workspaceId], references: [recordId]) 
+  workspace   Workspaces? @relation(fields: [workspaceId], references: [recordId])
 
-  entityId    String
-  entityType  SearchEntityType 
+  entityId   String
+  entityType SearchEntityType
 
-  content     String
+  content String
 
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([workspaceId, entityType])
   @@index([entityType, entityId])

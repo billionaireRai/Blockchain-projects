@@ -19,7 +19,7 @@ import Tangem from '@/public/images/tangem-logo.png' ;
 export function Login () {
   // applying ZOD validation on form feilds...
   const loginDataType = z.object({
-    Email:z.string().nonempty("Email is required for notifications").regex(new RegExp(emailRegex)),
+    Email:z.string().nonempty("Email is required for identification").regex(new RegExp(emailRegex)),
     Password:z.string().min(10).nonempty("Password is required for security")
   })
   const { register , handleSubmit , formState:{ errors , isSubmitting }} = useForm({ resolver:zodResolver(loginDataType) }) ;

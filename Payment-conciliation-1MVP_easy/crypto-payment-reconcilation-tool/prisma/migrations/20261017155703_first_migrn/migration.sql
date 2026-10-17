@@ -37,7 +37,7 @@ CREATE TYPE "ReconciliationStatus" AS ENUM ('PENDING', 'MATCHED', 'PARTIAL', 'MI
 CREATE TYPE "WorkspaceStatus" AS ENUM ('ACTIVE', 'INACTIVE', 'SUSPENDED', 'DELETED');
 
 -- CreateEnum
-CREATE TYPE "WorkspaceMemberRoles" AS ENUM ('OWNER', 'ADMIN', 'FINANCER', 'VIEWER');
+CREATE TYPE "WorkspaceMemberRoles" AS ENUM ('OWNER', 'ADMIN', 'FINANCER', 'VIEWER', 'GUEST');
 
 -- CreateEnum
 CREATE TYPE "MemberStatus" AS ENUM ('INVITED', 'ACTIVE', 'INACTIVE', 'SUSPENDED', 'REMOVED');
@@ -153,6 +153,8 @@ CREATE TABLE "User" (
     "recordId" TEXT NOT NULL DEFAULT 'usr_`${uuid()}`',
     "username" TEXT NOT NULL,
     "email" TEXT NOT NULL,
+    "profilepic" TEXT NOT NULL,
+    "profilebanner" TEXT NOT NULL,
     "authMethod" "AuthMethods" NOT NULL DEFAULT 'EMAIL',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -282,7 +284,7 @@ CREATE UNIQUE INDEX "Networks_slug_key" ON "Networks"("slug");
 CREATE UNIQUE INDEX "Networks_chainId_environment_key" ON "Networks"("chainId", "environment");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Wallets_workspaceId_address_key" ON "Wallets"("workspaceId", "address");
+CREATE UNIQUE INDEX "Wallets_workspaceId_address_networkId_key" ON "Wallets"("workspaceId", "address", "networkId");
 
 -- CreateIndex
 CREATE INDEX "Nonces_expiry_idx" ON "Nonces"("expiry");
@@ -292,6 +294,12 @@ CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_profilepic_key" ON "User"("profilepic");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_profilebanner_key" ON "User"("profilebanner");
 
 -- CreateIndex
 CREATE INDEX "User_email_username_idx" ON "User"("email", "username");
