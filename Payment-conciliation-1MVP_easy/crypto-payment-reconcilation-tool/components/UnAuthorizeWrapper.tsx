@@ -6,6 +6,7 @@ import Modal from '@/components/Modal';
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { ShieldCheckIcon , ShieldAlert } from "lucide-react";
+import useLockBodyScroll from "@/hooks/useLockBody";
 import { useAuthState } from "@/states/auth.state";
 
 export default function UnAuthorize({ children }: { children: React.ReactNode }) {
@@ -13,14 +14,16 @@ export default function UnAuthorize({ children }: { children: React.ReactNode })
   const { isAuth } = useAuthState() ;
 
   const isSecuredUrl = !pathname.startsWith("/auth") && !pathname.startsWith("/marketing/") && pathname !== "/" ;
-  const shouldShowUnauthorizedModal = !isAuth && isSecuredUrl ;
+  const showUnauthorizedModal = !isAuth && isSecuredUrl ;
+
+  useLockBodyScroll(showUnauthorizedModal);
 
   return (
     <>
-      <div className={`${shouldShowUnauthorizedModal && "pointer-events-none select-none blur-[2px]"}`}>
+      <div className={`${showUnauthorizedModal && "pointer-events-none select-none blur-[2px]"}`}>
         {children}
       </div>
-      {shouldShowUnauthorizedModal && (
+      {showUnauthorizedModal && (
         <Modal>
           <motion.div
             role="dialog"

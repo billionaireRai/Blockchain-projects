@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import { useForm } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail, Lock , LogIn } from "lucide-react"; // lightweight icons
-import { emailRegex } from '@/lib/Regex';
+import { emailRegex } from '@/lib/regex.utils';
 import logo from '@/public/images/paylume-logo.png';
 import LoginHero from '@/public/images/login-hero.jpg' ;
 import { WalletNameImgType } from '@/types/walletnameimg.type';

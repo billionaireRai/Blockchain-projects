@@ -1,6 +1,6 @@
 'use client'
 
-import { walletAddRegex } from '@/lib/Regex';
+import { walletAddRegex } from '@/lib/regex.utils';
 import axios from 'axios' ;
 
 export default function useWalletAuthentication() {

@@ -1,4 +1,6 @@
 
+'use server'
+
 type SearchMode = "EXACT" | "SEMANTIC" ;
 
 type SearchCategories = "USER" | "WALLET" | "INVOICE" | "WORKSPACE" | "AUDITLOGS" | "TRANSACTION" | "RECONCILIATION" | "SEMANTIC" ; 

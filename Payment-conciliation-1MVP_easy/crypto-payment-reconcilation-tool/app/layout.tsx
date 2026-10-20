@@ -5,6 +5,7 @@ import NavigationBar from "@/components/Navigation";
 import UnAuthorize from "@/components/UnAuthorizeWrapper";
 import { Rubik } from "next/font/google";
 import "./globals.css";
+import { Smoothscroller } from "@/components/Smoothscroller";
 
 const rubik = Rubik({
   subsets: ["latin"],
@@ -27,6 +28,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <body className="h-full flex flex-col rounded-lg">
        <Providers>
         <UnAuthorize>
+         <Smoothscroller/>
          <div id="scrollsec" className="relative flex flex-col h-fit overflow-y-auto overflow-x-hidden rounded-lg">
           <NavigationBar />
           {children}

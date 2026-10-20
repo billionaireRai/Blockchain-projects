@@ -3,7 +3,7 @@
 import React,{ useState } from 'react' ;
 import Image from 'next/image' ;
 import Link from 'next/link' ;
-import { emailRegex } from '@/lib/Regex';
+import { emailRegex } from '@/lib/regex.utils';
 import forgotPassword from '@/public/images/forgot-password.jpg' ;
 import logo from '@/public/images/paylume-logo.png' ; 
 import { Link2Icon, RefreshCcw, AtSignIcon , UserPlus2Icon } from 'lucide-react';

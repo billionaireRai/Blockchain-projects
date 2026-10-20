@@ -9,7 +9,7 @@ import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { NavItemsType } from "@/types/navitem.type"
 import { useWorkspaceState } from "@/states/workspace.state";
-import { ArrowLeftRight, RefreshCcw, Wallet, Users, FileText, BarChart3 , LogIn , UserRoundPlus, WalletCardsIcon, AtSignIcon, LayoutDashboardIcon, ListChevronsUpDown, ListChevronsDownUp, ArrowRightCircle, LogsIcon, LogOut } from "lucide-react";
+import { ArrowLeftRight, RefreshCcw, Wallet, Users, Loader2,FileText, BarChart3 , LogIn , UserRoundPlus, WalletCardsIcon, AtSignIcon, LayoutDashboardIcon, ListChevronsUpDown, ListChevronsDownUp, ArrowRightCircle, LogsIcon, LogOut } from "lucide-react";
 import usePopClose from "@/hooks/usePopClose";
 import { useAuthState } from "@/states/auth.state";
 
@@ -18,6 +18,7 @@ export default function NavigationBar() {
   const pathNotAllowed = ['/auth/'];
   const { isAuth , authStatus , user } = useAuthState() ;
   const { activeWorkspaceId } = useWorkspaceState() ; 
+  const [loading, setloading] = useState<boolean>(false);
   const [openOptions, setopenOptions] = useState<boolean>(false);
   const [loginPop, setloginPop] = useState<boolean>(false);
   const optionRef = useRef<HTMLDivElement>(null);
@@ -87,6 +88,15 @@ usePopClose(openOptions,setopenOptions,optionRef) ;
 
 if (pathNotAllowed.some((p) =>  path.startsWith(p))) return null ;
 
+  // funtion for wallet login process...
+  async function handleWalletAuth() {
+    setopenOptions(false);
+    setloading(true);
+    setTimeout(() => {
+      setloading(false);
+    }, 4000);
+  }
+
   return (
     <>
      <div className="sticky top-0 rounded-full">
@@ -110,8 +120,14 @@ if (pathNotAllowed.some((p) =>  path.startsWith(p))) return null ;
           ) : (
           <div className="flex items-center gap-2 justify-center w-fit rounded-full p-2">
             <div onClick={() => { setloginPop(!loginPop) }} className="relative bg-zinc-50 dark:text-white cursor-pointer flex items-center justify-center gap-1.5 rounded-full py-2 px-3 ease-out hover:bg-zinc-100">
-              <LogIn size={20} />
-              <span>Login</span>
+              { !loading ? (
+                <>
+                  <LogIn size={20} />
+                  <span>Login</span>
+                </>
+               ) : (
+                <Loader2 className="animate-spin"/>
+               )}
               {loginPop && (
                <motion.div 
                  ref={loginPopUpRef}
@@ -128,7 +144,7 @@ if (pathNotAllowed.some((p) =>  path.startsWith(p))) return null ;
                       <p className="text-xs text-gray-400 rounded-lg px-1">Authenticate securely with traditional email & password method.</p>
                     </div>
                   </Link>
-                  <div className="rounded-xl hover:bg-gray-100 flex items-center justify-center gap-1 p-2">
+                  <div onClick={handleWalletAuth} className="rounded-xl hover:bg-gray-100 flex items-center justify-center gap-1 p-2">
                     <div className="p-2 rounded-full"><WalletCardsIcon size={25} /></div>
                     <div className="flex flex-col">
                       <span className="font-semibold rounded-2xl p-1 text-lg">Crypto Wallet</span>

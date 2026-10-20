@@ -7,7 +7,7 @@ import { useParams } from 'next/navigation';
 import { useForm } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Lock, LockKeyholeIcon, RefreshCcwIcon } from "lucide-react"; // lightweight icons
-import { emailRegex } from '@/lib/Regex';
+import { emailRegex } from '@/lib/regex.utils';
 import logo from '@/public/images/paylume-logo.png';
 import Resetpassword from '@/public/images/reset-password.jpg';
 

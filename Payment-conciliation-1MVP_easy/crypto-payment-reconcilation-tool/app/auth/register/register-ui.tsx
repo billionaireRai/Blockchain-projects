@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { User, Mail, Lock , AtSign , UserPlus2Icon , LucideWallet } from "lucide-react"; // lightweight icons
-import { emailRegex , workspaceRegex } from '@/lib/Regex';
+import { emailRegex , workspaceRegex } from '@/lib/regex.utils';
 import logo from '@/public/images/paylume-logo.png';
 import RegisterAnimation from '@/public/svg/register-animation.svg' ;
 import { WalletNameImgType } from '@/types/walletnameimg.type';

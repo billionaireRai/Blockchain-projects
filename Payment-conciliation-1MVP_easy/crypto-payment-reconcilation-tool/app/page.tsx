@@ -25,7 +25,7 @@ import TwitterLogo from '@/public/images/twitter.png';
 import GithubLogo from '@/public/images/github.png';
 import { Increasingdot } from "@/components/Increasingdot";
 import { BarChart3Icon, Link as LINK , LucideVerified , Zap, ShieldCheck, Activity,BarChart3 ,Clock3,LockKeyhole , ArrowUpCircleIcon, FunctionSquareIcon , Plug, Database, GitCompareArrows, SearchCheck, CircleAlert, FileCheck2, LucideHandshake, LucideRocket, LockKeyholeOpenIcon, ChartBarIncreasingIcon, TriangleAlertIcon, LucideLayoutDashboard, ActivitySquareIcon, ShieldCheckIcon, CircleCheckIcon, LogsIcon, StarIcon, List, AtSignIcon } from "lucide-react";
-import { handleScrollToTop } from "@/lib/Autoscroll";
+import { handleScrollToTop } from "@/lib/autoscroll.utils";
 import { keyValuePair } from "@/types/keyvalue.type";
 import { WalletNameImgType } from "@/types/walletnameimg.type";
 
@@ -49,7 +49,7 @@ export default function Home() {
     }
   ] 
 
-const Keyfeatures: featureType[] = [
+ const Keyfeatures: featureType[] = [
   {
     icon: <LINK size={40} />,
     title: "Multi-Wallet Support",
@@ -98,7 +98,7 @@ const Keyfeatures: featureType[] = [
     explanation:
       "Protect financial data with secure access controls, encrypted communication, and reliable audit trails.",
   },
-];
+ ];
 
 const processes:featureType[] = [
   {
@@ -252,10 +252,7 @@ const socialMedia:WalletNameImgType[] = [
 
   return (
     <div className="flex flex-col flex-1 h-fit m-1 rounded-lg items-center justify-between font-rubik">
-     <motion.div 
-     initial={{ y: -30, opacity: 0 }}
-     animate={{ y: 0, opacity: 1 }}
-     transition={{ type: "spring", stiffness: 120, damping: 18 , mass: 0.8 }}
+     <div 
      className="HERO-SECTION flex flex-col lg:flex-row h-fit w-full gap-1 mb-20 rounded-lg">
       <div className="HERO-LEFT rounded-lg h-full flex flex-col justify-center gap-1.5 flex-1 p-1">
         <div className="TOP-TITLE border border-red-600/60 ring-3 ring-red-500/10 text-sm rounded-full text-red-600 flex gap-3 items-center justify-between h-10 w-fit p-4">
@@ -296,15 +293,11 @@ const socialMedia:WalletNameImgType[] = [
          </Link>
         </div>
       </div>
-      <motion.div
-       initial={{ scale:0.9 , opacity:0 }}
-       whileInView={{ scale: 1, opacity: 1 }}
-       viewport={{ once: true, amount: 0.2 }}
-       transition={{ duration:0.4 , delay:0.4 }}
+      <div
        className="HERO-IMAGE dark:invert rounded-lg h-full flex-2 overflow-hidden">
         <Image src={HeroImg} alt="Hero-Img" />
-      </motion.div>
-     </motion.div>
+      </div>
+     </div>
      <div className="rounded-lg w-full p-3 mb-20">
      <div className="w-full flex flex-col items-center justify-center gap-3 mb-10 text-center px-4">
       <motion.div
