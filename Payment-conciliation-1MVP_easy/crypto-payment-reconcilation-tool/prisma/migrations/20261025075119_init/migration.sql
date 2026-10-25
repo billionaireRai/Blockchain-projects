@@ -57,6 +57,15 @@ CREATE TYPE "AuditOutcome" AS ENUM ('SUCCESS', 'FAILURE', 'DENIED');
 -- CreateEnum
 CREATE TYPE "SearchEntityType" AS ENUM ('USER', 'WALLET', 'INVOICE', 'WORKSPACE', 'AUDITLOGS', 'TRANSACTION', 'RECONCILIATION', 'SEMANTIC');
 
+-- CreateEnum
+CREATE TYPE "SubscriptionStatus" AS ENUM ('INCOMPLETE', 'TRIALING', 'ACTIVE', 'PAST_DUE', 'PAUSED', 'CANCELED', 'EXPIRED');
+
+-- CreateEnum
+CREATE TYPE "BillingInterval" AS ENUM ('MONTHLY', 'YEARLY');
+
+-- CreateEnum
+CREATE TYPE "PaymentStatus" AS ENUM ('PENDING', 'SUCCEEDED', 'FAILED', 'REFUNDED');
+
 -- CreateTable
 CREATE TABLE "Transactions" (
     "recordId" TEXT NOT NULL DEFAULT 'txn_`${uuid()}`',
@@ -253,6 +262,63 @@ CREATE TABLE "Searchs" (
     CONSTRAINT "Searchs_pkey" PRIMARY KEY ("recordId")
 );
 
+-- CreateTable
+CREATE TABLE "SubscriptionPlan" (
+    "recordId" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT,
+    "price" INTEGER NOT NULL,
+    "currency" TEXT NOT NULL DEFAULT 'USD',
+    "billingInterval" "BillingInterval" NOT NULL,
+    "features" JSONB,
+    "providerPriceId" TEXT,
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "SubscriptionPlan_pkey" PRIMARY KEY ("recordId")
+);
+
+-- CreateTable
+CREATE TABLE "Subscription" (
+    "recordId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "planId" TEXT NOT NULL,
+    "provider" TEXT NOT NULL,
+    "providerSubscriptionId" TEXT,
+    "providerCustomerId" TEXT,
+    "status" "SubscriptionStatus" NOT NULL DEFAULT 'INCOMPLETE',
+    "billingInterval" "BillingInterval" NOT NULL,
+    "currentPeriodStart" TIMESTAMP(3),
+    "currentPeriodEnd" TIMESTAMP(3),
+    "trialStart" TIMESTAMP(3),
+    "trialEnd" TIMESTAMP(3),
+    "cancelAtPeriodEnd" BOOLEAN NOT NULL DEFAULT false,
+    "canceledAt" TIMESTAMP(3),
+    "endedAt" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Subscription_pkey" PRIMARY KEY ("recordId")
+);
+
+-- CreateTable
+CREATE TABLE "SubscriptionPayment" (
+    "recordId" TEXT NOT NULL,
+    "subscriptionId" TEXT NOT NULL,
+    "providerPaymentId" TEXT,
+    "providerInvoiceId" TEXT,
+    "amount" INTEGER NOT NULL,
+    "currency" TEXT NOT NULL DEFAULT 'USD',
+    "status" "PaymentStatus" NOT NULL DEFAULT 'PENDING',
+    "periodStart" TIMESTAMP(3),
+    "periodEnd" TIMESTAMP(3),
+    "paidAt" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "SubscriptionPayment_pkey" PRIMARY KEY ("recordId")
+);
+
 -- CreateIndex
 CREATE INDEX "Transactions_from_idx" ON "Transactions"("from");
 
@@ -352,6 +418,33 @@ CREATE INDEX "Searchs_workspaceId_entityType_idx" ON "Searchs"("workspaceId", "e
 -- CreateIndex
 CREATE INDEX "Searchs_entityType_entityId_idx" ON "Searchs"("entityType", "entityId");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "SubscriptionPlan_providerPriceId_key" ON "SubscriptionPlan"("providerPriceId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Subscription_providerSubscriptionId_key" ON "Subscription"("providerSubscriptionId");
+
+-- CreateIndex
+CREATE INDEX "Subscription_userId_idx" ON "Subscription"("userId");
+
+-- CreateIndex
+CREATE INDEX "Subscription_status_idx" ON "Subscription"("status");
+
+-- CreateIndex
+CREATE INDEX "Subscription_currentPeriodEnd_idx" ON "Subscription"("currentPeriodEnd");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "SubscriptionPayment_providerPaymentId_key" ON "SubscriptionPayment"("providerPaymentId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "SubscriptionPayment_providerInvoiceId_key" ON "SubscriptionPayment"("providerInvoiceId");
+
+-- CreateIndex
+CREATE INDEX "SubscriptionPayment_subscriptionId_idx" ON "SubscriptionPayment"("subscriptionId");
+
+-- CreateIndex
+CREATE INDEX "SubscriptionPayment_status_idx" ON "SubscriptionPayment"("status");
+
 -- AddForeignKey
 ALTER TABLE "Transactions" ADD CONSTRAINT "Transactions_networkId_fkey" FOREIGN KEY ("networkId") REFERENCES "Networks"("recordId") ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -387,3 +480,12 @@ ALTER TABLE "Searchs" ADD CONSTRAINT "Searchs_userId_fkey" FOREIGN KEY ("userId"
 
 -- AddForeignKey
 ALTER TABLE "Searchs" ADD CONSTRAINT "Searchs_workspaceId_fkey" FOREIGN KEY ("workspaceId") REFERENCES "Workspaces"("recordId") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Subscription" ADD CONSTRAINT "Subscription_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("recordId") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Subscription" ADD CONSTRAINT "Subscription_planId_fkey" FOREIGN KEY ("planId") REFERENCES "SubscriptionPlan"("recordId") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SubscriptionPayment" ADD CONSTRAINT "SubscriptionPayment_subscriptionId_fkey" FOREIGN KEY ("subscriptionId") REFERENCES "Subscription"("recordId") ON DELETE RESTRICT ON UPDATE CASCADE;

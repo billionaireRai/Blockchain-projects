@@ -213,6 +213,28 @@ enum SearchEntityType {
   SEMANTIC
 }
 
+enum SubscriptionStatus {
+  INCOMPLETE
+  TRIALING
+  ACTIVE
+  PAST_DUE
+  PAUSED
+  CANCELED
+  EXPIRED
+}
+
+enum BillingInterval {
+  MONTHLY
+  YEARLY
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}
+
 model Transactions {
   recordId String @id @default("txn_`${uuid()}`")
 
@@ -347,7 +369,7 @@ model Nonces {
 }
 
 model User {
-  recordId String @id @default("usr_`${uuid()}`")
+  recordId      String @id @default("usr_`${uuid()}`")
 
   username      String @unique
   email         String @unique
@@ -356,9 +378,10 @@ model User {
 
   authMethod AuthMethods @default(EMAIL)
 
-  members   WSmember[]
-  auditlogs Auditlogs[]
-  searches  Searchs[]
+  members       WSmember[]
+  auditlogs     Auditlogs[]
+  searches      Searchs[]
+  subscriptions Subscription[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -502,4 +525,103 @@ model Searchs {
 
   @@index([workspaceId, entityType])
   @@index([entityType, entityId])
+}
+
+
+model SubscriptionPlan {
+  recordId             String          @id @default(uuid())
+
+  name           String
+  description    String?
+
+  // Pricing in smallest currency unit...
+  price          Int
+  currency       String          @default("USD")
+
+  billingInterval BillingInterval
+
+  // Plan features
+  features       Json?
+
+  // Payment provider
+  providerPriceId String?        @unique
+
+  // Availability
+  isActive       Boolean         @default(true)
+
+  subscriptions  Subscription[]
+
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+model Subscription {
+  recordId                     String       @id @default(uuid())
+
+  // User relationship
+  userId                 String
+  user                   User               @relation(fields:[userId], references: [recordId])
+
+  // Plan details
+  planId                 String
+  plan                   SubscriptionPlan   @relation(fields: [planId], references: [recordId])
+
+  // Payment provider
+  provider               String             // STRIPE, RAZORPAY
+  providerSubscriptionId String?            @unique
+  providerCustomerId     String?
+
+  // Subscription details
+  status                 SubscriptionStatus @default(INCOMPLETE)
+  billingInterval        BillingInterval
+
+  // Billing cycle
+  currentPeriodStart     DateTime?
+  currentPeriodEnd       DateTime?
+
+  // Trial
+  trialStart             DateTime?
+  trialEnd               DateTime?
+
+  // Cancellation
+  cancelAtPeriodEnd      Boolean            @default(false)
+  canceledAt             DateTime?
+  endedAt                DateTime?
+
+  // Payment records
+  payments               SubscriptionPayment[]
+
+  // Timestamps
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([currentPeriodEnd])
+}
+
+
+model SubscriptionPayment {
+  recordId                String        @id @default(cuid())
+
+  subscriptionId    String
+  subscription      Subscription  @relation(fields: [subscriptionId], references: [recordId])
+
+  // Payment provider
+  providerPaymentId String?       @unique
+  providerInvoiceId String?       @unique
+
+  // Payment details
+  amount            Int
+  currency          String        @default("USD")
+  status            PaymentStatus @default(PENDING)
+
+  // Billing period
+  periodStart       DateTime?
+  periodEnd         DateTime?
+
+  paidAt            DateTime?
+  createdAt         DateTime      @default(now())
+
+  @@index([subscriptionId])
+  @@index([status])
 }

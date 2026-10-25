@@ -3,7 +3,7 @@
 import CryptoJS from "crypto-js" ;
 import BcryptJS from 'bcryptjs' ;
 
-const EncryptionKey = process.env.ENCRYPTION_KEY! ;
+const EncryptionKey = process.env.DBID_ENCRYPTION_KEY! ;
 const SaltRound = process.env.HASHING_SALT_ROUND! ; 
 
 // encryption on going from server...
