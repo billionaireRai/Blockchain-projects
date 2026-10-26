@@ -4,12 +4,13 @@ import z from 'zod' ;
 import Link from 'next/link';
 import Image from 'next/image' ;
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { User, Mail, Lock , AtSign , UserPlus2Icon , LucideWallet } from "lucide-react"; // lightweight icons
 import { emailRegex , workspaceRegex } from '@/lib/regex.utils';
 import logo from '@/public/images/paylume-logo.png';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 import RegisterAnimation from '@/public/svg/register-animation.svg' ;
 import { WalletNameImgType } from '@/types/walletnameimg.type';
 import EthereumLogo from '@/public/images/ethereum.png' ;
@@ -18,6 +19,7 @@ import Phantom from '@/public/images/phantom-logo.png' ;
 import Tangem from '@/public/images/tangem-logo.png' ;
 
 export function Register () {
+  const { openConnectModal } = useConnectModal() ; // for manual connect modal pop...
   const [hoveredButton, sethoveredButton] = useState<"email" | "wallet" | null>(null);
   // applying ZOD validation on form feilds...
   const registerDataType = z.object({
@@ -49,6 +51,11 @@ export function Register () {
 // function for processing registration...
 async function handleRegisterLogic() {
   
+}
+
+// function for wallet auth...
+function handlewalletAuth() {
+  openConnectModal?.();
 }
   return (
     <div className='flex flex-col sm:flex-row items-center h-screen rounded-lg p-2 gap-10 sm:gap-0 font-rubik'>
@@ -148,6 +155,7 @@ async function handleRegisterLogic() {
 
               <button
                 type="button"
+                onClick={handlewalletAuth}
                 onMouseEnter={() => sethoveredButton("wallet")}
                 className={`flex h-12 min-w-0 cursor-pointer items-center justify-center gap-2 shrink-0 overflow-hidden whitespace-nowrap rounded-full bg-zinc-200 font-semibold text-black transition-[flex-basis] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]
                 ${ hoveredButton === "wallet" ? "basis-full" : hoveredButton === "email" ? "basis-0" : "basis-1/2" }`}

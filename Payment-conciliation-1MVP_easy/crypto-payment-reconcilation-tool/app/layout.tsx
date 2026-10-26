@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Providers from "./provider";
 import NavigationBar from "@/components/Navigation";
 import UnAuthorize from "@/components/UnAuthorizeWrapper";
+import Rainbowprovider from "@/components/Rainbow";
 import { Rubik } from "next/font/google";
 import "./globals.css";
 import { Smoothscroller } from "@/components/Smoothscroller";
@@ -29,10 +30,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
        <Providers>
         <UnAuthorize>
          <Smoothscroller/>
-         <div id="scrollsec" className="relative flex flex-col h-fit overflow-y-auto overflow-x-hidden rounded-lg">
-          <NavigationBar />
-          {children}
-         </div>
+         <Rainbowprovider>
+           <div id="scrollsec" className="relative flex flex-col h-fit overflow-y-auto overflow-x-hidden rounded-lg">
+            <NavigationBar />
+            {children}
+           </div>
+         </Rainbowprovider>
         </UnAuthorize>
        </Providers>
     </body>
