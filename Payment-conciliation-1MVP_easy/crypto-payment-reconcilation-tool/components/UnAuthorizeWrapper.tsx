@@ -23,8 +23,7 @@ export default function UnAuthorize({ children }: { children: React.ReactNode })
       <div className={`${showUnauthorizedModal && "pointer-events-none select-none blur-[2px]"}`}>
         {children}
       </div>
-      {showUnauthorizedModal && (
-        <Modal>
+        <Modal showPop={showUnauthorizedModal} >
           <motion.div
             role="dialog"
             aria-modal="true"
@@ -89,7 +88,6 @@ export default function UnAuthorize({ children }: { children: React.ReactNode })
             </div>
           </motion.div>
        </Modal>
-      )}
     </>
   );
 }

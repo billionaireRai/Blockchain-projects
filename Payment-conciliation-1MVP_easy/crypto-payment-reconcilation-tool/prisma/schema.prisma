@@ -353,17 +353,17 @@ model Wallets {
 }
 
 model Nonces {
-  recordId String @id @default("non_`${uuid()}`")
+  recordId  String      @id @default("non_`${uuid()}`")
 
   nonce     String
   usedFor   NonceUses   @default(WALLET_AUTHENTICATION)
   walletAdd String?
   status    NonceStatus @default(UNUSED)
 
-  expiry DateTime
+  expiry    DateTime
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 
   @@index([expiry])
 }

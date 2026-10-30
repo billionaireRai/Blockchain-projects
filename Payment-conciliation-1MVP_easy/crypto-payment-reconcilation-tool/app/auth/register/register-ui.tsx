@@ -57,6 +57,7 @@ async function handleRegisterLogic() {
 function handlewalletAuth() {
   openConnectModal?.();
 }
+
   return (
     <div className='flex flex-col sm:flex-row items-center h-screen rounded-lg p-2 gap-10 sm:gap-0 font-rubik'>
       <div className='FORM-SECTION flex flex-col justify-start rounded-lg flex-1 h-full p-2'>
