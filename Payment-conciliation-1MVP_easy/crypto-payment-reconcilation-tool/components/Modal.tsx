@@ -4,8 +4,8 @@ import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 interface ModalProps {
-  children: React.ReactNode;
-  showPop: boolean;
+  children: React.ReactNode ;
+  showPop: boolean ;
 }
 
 export default function Modal({ children, showPop }: ModalProps) {

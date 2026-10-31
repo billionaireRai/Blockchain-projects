@@ -14,7 +14,7 @@ export default function UnAuthorize({ children }: { children: React.ReactNode })
   const { isAuth } = useAuthState() ;
 
   const isSecuredUrl = !pathname.startsWith("/auth") && !pathname.startsWith("/marketing/") && pathname !== "/" ;
-  const showUnauthorizedModal = !isAuth && isSecuredUrl ;
+  const showUnauthorizedModal = !isAuth && !isSecuredUrl ;
 
   useLockBodyScroll(showUnauthorizedModal);
 

@@ -99,7 +99,7 @@ if (pathNotAllowed.some((p) =>  path.startsWith(p))) return null ;
 
   return (
     <>
-     <div className="sticky top-0 rounded-full">
+     <div className="sticky top-0 z-20 rounded-full">
       <div className="relative flex items-center justify-between rounded-full backdrop-blur-3xl font-rubik p-1">
         <section className="rounded-full shrink-0" >
           <Image src={logo} alt="paylume.logo" height={150} width={150} className=" rounded-full" />

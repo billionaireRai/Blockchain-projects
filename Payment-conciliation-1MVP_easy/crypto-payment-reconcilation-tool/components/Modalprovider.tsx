@@ -3,14 +3,16 @@
 import Modal from './Modal';
 import { useGlobalUI } from '@/states/ui.state';
 import { ModalDataType } from '@/types/status.type';
-import { AlertCircle , ArrowRight , ServerCrash, AlertTriangle, RefreshCw, X, ArrowUpRight, Activity } from "lucide-react";
+import { AlertCircle , ArrowRight , ServerCrash, RefreshCw, X, ArrowUpRight, Activity , AlertTriangle } from "lucide-react";
 import Activebeep from './Beep';
 import { useRouter } from 'next/navigation';
+import { handleLogoutTrigger } from '@/lib/logout.utils';
+import { LogoutModal } from './Logoutmodal';
 
 
 export function Modalprovider() { // Modaldata:ModalDataType
     const router = useRouter();
-    const { clientErrorModal , setclientErrorModal , serverErrorModal , setserverErrorModal , retryFn } = useGlobalUI() ; // ui states hook initialization...
+    const { clientErrorModal , setclientErrorModal , serverErrorModal , setserverErrorModal , retryFn , deleteModal , setdeleteModal } = useGlobalUI() ; // ui states hook initialization...
     
     const Modaldata:ModalDataType = {
        type: "error",
@@ -21,6 +23,7 @@ export function Modalprovider() { // Modaldata:ModalDataType
     }
   return (
     <>
+     {/* 4xx error modal content */}
       <Modal showPop={clientErrorModal} >
           <div className="relative font-rubik flex w-full max-w-lg flex-col overflow-hidden rounded-3xl border border-gray-200/80 bg-white p-6 shadow-2xl sm:p-7">
           {/* Header */}
@@ -125,6 +128,7 @@ export function Modalprovider() { // Modaldata:ModalDataType
           </div>
         </div>
       </Modal>
+     {/* 5xx error modal content  */}
       <Modal showPop={serverErrorModal}>
         <div className="relative w-full max-w-lg font-rubik overflow-hidden rounded-3xl bg-white shadow-2xl">
          {/* Dark Header Section */}
@@ -247,6 +251,7 @@ export function Modalprovider() { // Modaldata:ModalDataType
        </div>
      </div>
       </Modal>
+      <LogoutModal LogoutTrigger={handleLogoutTrigger} />
     </>
     )
 }

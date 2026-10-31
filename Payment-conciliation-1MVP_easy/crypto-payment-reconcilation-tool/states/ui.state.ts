@@ -4,26 +4,33 @@ import { persist } from "zustand/middleware";
 
 interface globalUiState {
     deleteModal:boolean ;
-    removeModal:boolean ;
+    logoutModal:boolean ;
     clientErrorModal:boolean ;
     serverErrorModal:boolean ;
+    addWalletModal:boolean ;
+    addWorkspaceModal:boolean ;
     retryFn: (() => void | Promise<void>) | null;
     setdeleteModal:(value:boolean) => void ;
-    setremoveModal:(value:boolean) => void ;
+    setlogoutModal:(value:boolean) => void ;
     setclientErrorModal:(value:boolean) => void ;
-    setserverErrorModal:(value:boolean,retryFn:(() => void | Promise<void>) | null) => void
+    setserverErrorModal:(value:boolean,retryFn:(() => void | Promise<void>) | null) => void ;
+    setaddWalletModal:(value:boolean) => void ;
 }
 
 export const useGlobalUI = create<globalUiState>()(persist((set) => ({
-    deleteModal:false ,
-    removeModal:false ,
+    deleteModal:true ,
+    logoutModal:false ,
     clientErrorModal:false ,
-    serverErrorModal:true ,
+    serverErrorModal:false ,
+    addWalletModal:false ,
+    addWorkspaceModal:false ,
     retryFn: null,
     setdeleteModal:(value:boolean) => set({ deleteModal:value }),
-    setremoveModal:(value:boolean) => set({ removeModal:value }),
+    setlogoutModal:(value:boolean) => set({ logoutModal:value }),
     setclientErrorModal:(value:boolean) => set({ clientErrorModal:value }),
-    setserverErrorModal:(value:boolean,retryFn:(() => void | Promise<void>) | null) => set({ serverErrorModal:value , retryFn })
+    setserverErrorModal:(value:boolean,retryFn:(() => void | Promise<void>) | null) => set({ serverErrorModal:value , retryFn }),
+    setaddWalletModal:(value:boolean) => set({ addWalletModal:value }),
+    setaddWorkspaceModal:(value:boolean) => set({ addWorkspaceModal:value })
     }),
     {
       name: "globalui-states",
