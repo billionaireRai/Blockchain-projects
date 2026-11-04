@@ -3,18 +3,20 @@
 
 import Image from "next/image";
 import logo from '@/public/images/paylume-logo.png' ;
+import Icon from '@/public/images/paylume-icon.png' ;
 import Link from "next/link";
 import { useState , useRef } from "react"
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { NavItemsType } from "@/types/navitem.type"
 import { useWorkspaceState } from "@/states/workspace.state";
-import { ArrowLeftRight, RefreshCcw, Wallet, Users, Loader2,FileText, BarChart3 , LogIn , UserRoundPlus, WalletCardsIcon, AtSignIcon, LayoutDashboardIcon, ListChevronsUpDown, ListChevronsDownUp, ArrowRightCircle, LogsIcon, LogOut } from "lucide-react";
+import { ArrowLeftRight, RefreshCcw, Wallet, Users, Loader2,FileText, BarChart3 , LogIn , UserRoundPlus, WalletCardsIcon, AtSignIcon, LayoutDashboardIcon, ListChevronsUpDown, ListChevronsDownUp, ArrowRightCircle, LogsIcon, LogOut, FileCodeCornerIcon, TagsIcon, MessageCircle } from "lucide-react";
 import usePopClose from "@/hooks/usePopClose";
 import { useAuthState } from "@/states/auth.state";
+import { handleLogoutTrigger } from "@/lib/logout.utils";
 
 export default function NavigationBar() {
-  const path = usePathname() ; // initializing usePathname hook...
+  const currentpath = usePathname() ; // initializing usePathname hook...
   const pathNotAllowed = ['/auth/'];
   const { isAuth , authStatus , user } = useAuthState() ;
   const { activeWorkspaceId } = useWorkspaceState() ; 
@@ -86,7 +88,13 @@ const navItems:NavItemsType[] = [
 usePopClose(loginPop,setloginPop,loginPopUpRef) ;
 usePopClose(openOptions,setopenOptions,optionRef) ;
 
-if (pathNotAllowed.some((p) =>  path.startsWith(p))) return null ;
+if (pathNotAllowed.some((p) =>  currentpath.startsWith(p))) return null ;
+
+  // function for path matching...
+  function MatchCurrentPath(path:string) : boolean {
+    if (path === currentpath) return true ; 
+    else return false ;
+  } 
 
   // funtion for wallet login process...
   async function handleWalletAuth() {
@@ -99,26 +107,41 @@ if (pathNotAllowed.some((p) =>  path.startsWith(p))) return null ;
 
   return (
     <>
-     <div className="sticky top-0 z-20 rounded-full">
+     <div className="sticky top-1 z-20 rounded-full">
       <div className="relative flex items-center justify-between rounded-full backdrop-blur-3xl font-rubik p-1">
         <section className="rounded-full shrink-0" >
-          <Image src={logo} alt="paylume.logo" height={150} width={150} className=" rounded-full" />
+          <Image src={logo} alt="paylume.logo" height={150} width={150} className=" rounded-full hidden md:block" />
+          <Image src={Icon} alt="paylume.logo" height={40} width={40} className=" rounded-full md:hidden" />
         </section>
-        <section className="flex items-center justify-center gap-1 rounded-full p-1">
+        <section className="flex flex-col md:flex-row items-center justify-center gap-1 rounded-xl md:rounded-full">
+        <div className="flex flex-wrap items-center justify-center gap-1 border border-gray-200 shadow-sm rounded-full p-1">
+            <Link href={'/marketing/documentation'} className={`${MatchCurrentPath('/marketing/documentation') && 'border ring-3 border-zinc-600 ring-zinc-700/10'} relative bg-zinc-50 dark:text-white cursor-pointer flex items-center justify-center gap-1.5 rounded-full py-2 px-3 ease-out hover:bg-zinc-100`}>
+              <FileCodeCornerIcon size={20} />
+              <span>Documentation</span>
+            </Link>
+            <Link href={'/marketing/contact'} className={`${MatchCurrentPath('/marketing/contact') && 'border ring-3 border-zinc-600 ring-zinc-700/10'} relative bg-zinc-50 dark:text-white cursor-pointer flex items-center justify-center gap-1.5 rounded-full py-2 px-3 ease-out hover:bg-zinc-100`}>
+              <MessageCircle size={20} />
+              <span>Contact</span>
+            </Link>
+            <Link href={'/marketing/pricing'} className={`${MatchCurrentPath('/marketing/pricing') && 'border ring-3 border-zinc-600 ring-zinc-700/10'} relative bg-zinc-50 dark:text-white cursor-pointer flex items-center justify-center gap-1.5 rounded-full py-2 px-3 ease-out hover:bg-zinc-100`}>
+              <TagsIcon size={20} />
+              <span>Pricing</span>
+            </Link>
+        </div>
          {( isAuth && authStatus === 'authenticated' ) ? (
-          <div className="flex items-center gap-2 justify-center w-fit rounded-full p-2">
+          <div className="flex items-center gap-2 justify-center w-fit rounded-full">
            <div 
             onClick={() => { setopenOptions(!openOptions) }} 
-            className="flex w-fit cursor-pointer items-center gap-2 overflow-hidden rounded-full bg-white dark:text-white hover:bg-gray-50 p-2 text-black">
+            className="flex w-fit cursor-pointer items-center gap-2 border overflow-hidden rounded-full bg-white dark:text-white hover:bg-gray-50 p-2 text-black">
             { openOptions ? <ListChevronsDownUp size={20} /> : <ListChevronsUpDown size={20} /> }
            </div>
-           <button className="flex cursor-pointer items-center justify-center gap-1.5 rounded-full bg-zinc-950  px-3 py-2 text-white ease-out hover:bg-zinc-900 ring-0 hover:ring-4 hover:ring-zinc-950/5" >
+           <button onClick={handleLogoutTrigger} className="flex cursor-pointer items-center justify-center gap-1.5 border border-black rounded-full bg-zinc-950  px-3 py-2 text-white ease-out hover:bg-zinc-900 ring-0 hover:ring-4 hover:ring-zinc-950/5" >
             <LogOut size={20} />
             <span>Log Out</span>
            </button>
           </div>
           ) : (
-          <div className="flex items-center gap-2 justify-center w-fit rounded-full p-2">
+          <div className="flex items-center gap-2 justify-center w-fit rounded-full p-1 border border-gray-200 shadow-sm">
             <div onClick={() => { setloginPop(!loginPop) }} className="relative bg-zinc-50 dark:text-white cursor-pointer flex items-center justify-center gap-1.5 rounded-full py-2 px-3 ease-out hover:bg-zinc-100">
               { !loading ? (
                 <>
@@ -131,12 +154,12 @@ if (pathNotAllowed.some((p) =>  path.startsWith(p))) return null ;
               {loginPop && (
                <motion.div 
                  ref={loginPopUpRef}
-                 initial={{ opacity: 0, scale: 0.9, y: 0 , x: 0 }}
-                 animate={{ opacity: 1, scale: 1, y: -8 , x:-8 }}
-                 exit={{ opacity: 0, scale: 0.9, y: -4 , x:-4 }}
-                 transition={{ duration: 0.2, ease: 'easeInOut' }}
+                 initial={{ opacity: 0, scale: 0.85, y: 12 }}
+                 animate={{ opacity: 1, scale: 1, y: -10 }}
+                 exit={{ opacity: 0, scale: 0.9, y: -4, x: -4 }}
+                 transition={{ type: "spring", stiffness: 200, damping: 8, mass: 0.5 }}
                  style={{ transformOrigin: 'top right', willChange: 'transform, opacity' }}
-                 className="absolute bg-white top-13 right-0 shadow-lg rounded-xl w-80 max-w-sm p-1 flex flex-col items-center justify-center gap-1" >
+                 className="absolute bg-white -left-30 top-15 shadow-lg rounded-xl w-80 max-w-sm p-1 flex flex-col items-center justify-center gap-1" >
                   <Link href={'/auth/login'} className="rounded-2xl hover:bg-gray-100 flex items-center justify-center gap-1 p-2">
                     <div className="p-2 rounded-full"><AtSignIcon size={25} /></div>
                     <div className="flex flex-col">
@@ -154,7 +177,7 @@ if (pathNotAllowed.some((p) =>  path.startsWith(p))) return null ;
                </motion.div>
               )}
             </div>
-            <Link href={'/auth/register'} className="flex cursor-pointer items-center justify-center gap-1.5 rounded-full bg-zinc-950  px-3 py-2 text-white ease-out hover:bg-zinc-900 ring-0 hover:ring-4 hover:ring-zinc-950/5"
+            <Link href={'/auth/register'} className="flex cursor-pointer items-center justify-center gap-1.5 border border-black rounded-full bg-zinc-950  px-3 py-2 text-white ease-out hover:bg-zinc-900 ring-0 hover:ring-4 hover:ring-zinc-950/5"
             >
               <UserRoundPlus size={20} />
               <span>Register</span>

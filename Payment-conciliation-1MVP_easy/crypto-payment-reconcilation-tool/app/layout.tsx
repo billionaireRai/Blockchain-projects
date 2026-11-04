@@ -29,7 +29,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
     <body className="h-full flex flex-col rounded-lg">
        <Providers>
-        <UnAuthorize>
          <Modalprovider/>
          <Smoothscroller/>
          <Rainbowprovider>
@@ -38,7 +37,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             {children}
            </div>
          </Rainbowprovider>
-        </UnAuthorize>
        </Providers>
     </body>
     </html>
