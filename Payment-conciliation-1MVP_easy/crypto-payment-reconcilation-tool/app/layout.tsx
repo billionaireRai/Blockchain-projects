@@ -34,7 +34,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
          <Rainbowprovider>
            <div id="scrollsec" className="relative flex flex-col h-fit overflow-y-auto overflow-x-hidden rounded-lg">
             <NavigationBar />
-            {children}
+            <main className="mt-24">{children}</main>
            </div>
          </Rainbowprovider>
        </Providers>

@@ -107,8 +107,8 @@ if (pathNotAllowed.some((p) =>  currentpath.startsWith(p))) return null ;
 
   return (
     <>
-     <div className="sticky top-1 z-20 rounded-full">
-      <div className="relative flex items-center justify-between rounded-full backdrop-blur-3xl font-rubik p-1">
+     <div className="fixed top-3 w-full z-20 rounded-2xl px-2 shadow-md">
+      <div className="relative flex items-center justify-between rounded-full backdrop-blur-sm font-rubik p-1">
         <section className="rounded-full shrink-0" >
           <Image src={logo} alt="paylume.logo" height={150} width={150} className=" rounded-full hidden md:block" />
           <Image src={Icon} alt="paylume.logo" height={40} width={40} className=" rounded-full md:hidden" />
@@ -132,10 +132,10 @@ if (pathNotAllowed.some((p) =>  currentpath.startsWith(p))) return null ;
           <div className="flex items-center gap-2 justify-center w-fit rounded-full">
            <div 
             onClick={() => { setopenOptions(!openOptions) }} 
-            className="flex w-fit cursor-pointer items-center gap-2 border overflow-hidden rounded-full bg-white dark:text-white hover:bg-gray-50 p-2 text-black">
+            className="flex w-fit cursor-pointer items-center gap-2 overflow-hidden rounded-full bg-white dark:text-white hover:bg-gray-50 p-2 text-black">
             { openOptions ? <ListChevronsDownUp size={20} /> : <ListChevronsUpDown size={20} /> }
            </div>
-           <button onClick={handleLogoutTrigger} className="flex cursor-pointer items-center justify-center gap-1.5 border border-black rounded-full bg-zinc-950  px-3 py-2 text-white ease-out hover:bg-zinc-900 ring-0 hover:ring-4 hover:ring-zinc-950/5" >
+           <button onClick={handleLogoutTrigger} className="flex cursor-pointer items-center justify-center gap-1.5 rounded-full bg-zinc-950  px-3 py-2 text-white ease-out hover:bg-zinc-900 ring-0 hover:ring-4 hover:ring-zinc-950/5" >
             <LogOut size={20} />
             <span>Log Out</span>
            </button>
@@ -157,7 +157,7 @@ if (pathNotAllowed.some((p) =>  currentpath.startsWith(p))) return null ;
                  initial={{ opacity: 0, scale: 0.85, y: 12 }}
                  animate={{ opacity: 1, scale: 1, y: -10 }}
                  exit={{ opacity: 0, scale: 0.9, y: -4, x: -4 }}
-                 transition={{ type: "spring", stiffness: 200, damping: 8, mass: 0.5 }}
+                 transition={{ type: "spring", stiffness: 150, damping: 8, mass: 0.5 }}
                  style={{ transformOrigin: 'top right', willChange: 'transform, opacity' }}
                  className="absolute bg-white -left-30 top-15 shadow-lg rounded-xl w-80 max-w-sm p-1 flex flex-col items-center justify-center gap-1" >
                   <Link href={'/auth/login'} className="rounded-2xl hover:bg-gray-100 flex items-center justify-center gap-1 p-2">
@@ -189,15 +189,15 @@ if (pathNotAllowed.some((p) =>  currentpath.startsWith(p))) return null ;
       {openOptions && (
        <motion.div
          ref={optionRef}
-         initial={{ opacity: 0, scale: 0.9, y: 0 , x: 0 }}
-         animate={{ opacity: 1, scale: 1, y: -15 , x:-15 }}
-         exit={{ opacity: 0, scale: 0.9, y: -8 , x:-8 }}
-         transition={{ duration: 0.2, ease: 'easeInOut' }}
+         initial={{ opacity: 0, scale: 0.85, y: 12 }}
+         animate={{ opacity: 1, scale: 1, y: -10 }}
+         exit={{ opacity: 0, scale: 0.9, y: -4, x: -4 }}
+         transition={{ type: "spring", stiffness: 100, damping: 8, mass: 0.5 }}
          style={{ transformOrigin: 'top right', willChange: 'transform, opacity' }}
-         className="absolute bg-white dark:bg-black top-full right-0 font-rubik w-fit max-w-3/4 p-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1 shadow-lg rounded-xl"
+         className="absolute bg-white dark:bg-black top-20 right-0 font-rubik w-fit max-w-3/4 p-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1 shadow-lg rounded-xl"
        >
         {navItems.map((nav,index) => (
-         <Link href={`/dashboard/${activeWorkspaceId}/${nav.urlRoute || ''}`} key={index} className="rounded-xl cursor-pointer border border-white hover:border-red-600 hover:bg-red-50 ring-0 hover:ring-3 hover:ring-red-700/8 flex items-center justify-start gap-1 p-2 transition-colors duration-300">
+         <Link href={`/dashboard/${activeWorkspaceId}/${nav.urlRoute || ''}`} key={index} className="rounded-xl cursor-pointer border border-white hover:border-zinc-400 hover:bg-zinc-100 ring-0 hover:ring-3 hover:ring-zinc-600/10 flex items-center justify-start gap-1 p-2 transition-colors duration-300">
            <div className="p-2 rounded-full">{nav.icon}</div>
            <div className="flex flex-col">
              <span className="font-semibold rounded-2xl p-1 text-md">{nav.label}</span>
@@ -205,9 +205,8 @@ if (pathNotAllowed.some((p) =>  currentpath.startsWith(p))) return null ;
            </div>
          </Link>
         ))}
-        <Link href={`user/${user?.userId}`} className="rounded-xl group cursor-pointer border border-white hover:border-red-600 hover:bg-red-50 hover:ring-3 hover:ring-red-700/8 flex gap-1 items-center justify-center p-2 transition-colors duration-300">
+        <Link href={`/profile/${user?.username}`} className="rounded-xl group cursor-pointer border border-white hover:border-red-600 hover:bg-red-50 hover:ring-3 hover:ring-red-700/8 flex gap-1 items-center justify-center p-2 transition-colors duration-300">
          <div className="size-14 shrink-0 overflow-hidden rounded-full">
-
            <Image
              src={ user?.profilepic || "/images/amritansh-avatar.png" }
              alt="user-avatar"

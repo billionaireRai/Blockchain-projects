@@ -2,10 +2,11 @@ import { Contact } from "./contact-ui";
 import type { Metadata } from "next" ;
 
 export const metadata: Metadata = {
-  title: "Get Registered On Paylume | Paylume",
+  title: "Get in Touch | Paylume",
   description:
-    "Complete registration by Creating your Paylume account and start reconciling Ethereum payments for free with confidence...",
+    "Enjoying Paylume or interested in working together ? Get in touch for professional inquiries, business collaborations, partnerships, and opportunities to build with us.",
 };
+
 
 export default function page() {
   return (

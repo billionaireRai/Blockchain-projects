@@ -12,8 +12,8 @@ interface UserAuthenticationState {
 
 export const useAuthState = create<UserAuthenticationState>()(persist((set) => ({
       user: { userId: "4950jfbhdgfr03", username: "@amritanshraii", email: "amritansh6136@gmail.com" },
-      isAuth: false,
-      authStatus: "unauthenticated",
+      isAuth: true,
+      authStatus: "authenticated",
       setUser: (usr: Usertype) => set({ user: usr }),
       setisAuth: (value: boolean) => set({ isAuth: value }),
       setauthStatus: (status: AuthStatus) => set({ authStatus: status })

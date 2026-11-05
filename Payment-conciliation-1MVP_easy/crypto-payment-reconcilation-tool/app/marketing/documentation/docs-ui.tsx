@@ -7,8 +7,8 @@ import Image from "next/image";
 import Link from "next/link";
 import Logo from "@/public/images/paylume-logo.png";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowDown, ArrowRight, ArrowUpRight, Blocks, Check, ChevronRight, Clock, Copy, Database, FileCode2, Fingerprint, GitBranch, Globe, KeyRound, LockKeyhole, Network, Server, ShieldCheck ,Wallet, AlertTriangle, Layers, Zap,ShieldCheck as ShieldCheckIcon, AlertCircle, Cookie, } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUpRight, Blocks, Check, ChevronRight, Clock, Copy, Database, FileCode2, Fingerprint, GitBranch, Globe, KeyRound, LockKeyhole, Network, ShieldCheck ,Wallet, AlertTriangle, Layers, Zap,ShieldCheck as ShieldCheckIcon, AlertCircle, BrainCircuitIcon, ArrowRightCircleIcon, } from "lucide-react";
+import Activebeep from "@/components/Beep";
 
 type TerminalStatus = "idle" | "copied" | "error" ;
 
@@ -23,81 +23,201 @@ const reconciliationFlow : string[] = [
   "The payment record is marked reconciled and the result is stored"
 ];
 
+const overviewCard = [
+  { icon: <Image src="/images/bitcoin.png" width={60} height={60} alt="wallet" />, 
+    t: "1 · Prove identity",
+    d: "Sign a nonce with your wallet" 
+  },
+  { icon: <Image src="/images/cryptocurrency.png" width={60} height={60} alt="fingerprint" />, 
+    t: "2 · Define expectation", 
+    d: "Amount · recipient · asset · network" 
+  },
+  { icon: <Image src="/images/blockchain.png" width={60} height={60} alt="blockchain" />, 
+    t: "3 · Observe the chain", 
+    d: "Fetch transaction + receipt via RPC" 
+  },
+  { icon: <Image src="/images/securitytrust.png" width={60} height={60} alt="trust" />, 
+    t: "4 · Match rules", 
+    d: "Compare observed vs expected" 
+  },
+  { icon: <Image src="/images/mismatch-icon.png" width={60} height={60} alt="reconcile" />, 
+    t: "5 · Reconcile", 
+    d: "Wait for confirmations, store result" 
+  }
+]
 
 
-const matchingRules: { icon: LucideIcon; rule: string; check: string }[] = [
 
-  { icon: Network, rule: "Network", check: "The transaction's chain ID must equal the chain the payment expects. A transfer on another network never matches." },
-
-  { icon: Wallet, rule: "Recipient", check: "The `to` address is compared with the expected address after normalizing case/checksum." },
-
-  { icon: Layers, rule: "Asset", check: "Native ETH transfers are read from `value`. Token transfers would be read from transfer event logs instead." },
-
-  { icon: Zap, rule: "Amount", check: "Compared in wei using integer (BigInt) math, never floating point, to avoid rounding errors." },
-
-  { icon: Check, rule: "Execution status", check: "The receipt must show success. A mined but reverted transaction is not a payment." },
-
-  { icon: Clock, rule: "Confirmations", check: "Current block minus inclusion block must reach the configured threshold before the payment is final." },
-
-  { icon: Fingerprint, rule: "Uniqueness", check: "A transaction hash can satisfy only one payment, preventing the same transfer being claimed twice." }
-
+const matchingRules = [
+  { icon: <Image src="/images/blockchain.png" width={60} height={60} alt="network" />, 
+    rule: "Network", 
+    check: "The transaction's chain ID must equal the chain the payment expects. A transfer on another network never matches." 
+  },
+  { icon: <Image src="/images/wallet-icon.png" width={60} height={60} alt="wallet" />, 
+    rule: "Recipient", 
+    check: "The `to` address is compared with the expected address after normalizing case/checksum." 
+  },
+  { icon: <Image src="/images/cryptocurrency.png" width={60} height={60} alt="cryptocurrency" />, 
+    rule: "Asset", 
+    check: "Native ETH transfers are read from `value`. Token transfers would be read from transfer event logs instead."
+  },
+  { icon: <Image src="/images/money-bag.png" width={60} height={60} alt="amount" />, 
+    rule: "Amount", 
+    check: "Compared in wei using integer (BigInt) math, never floating point, to avoid rounding errors." 
+  },
+  { icon: <Image src="/images/status-icon.png" width={60} height={60} alt="status" />, 
+    rule: "Execution status", 
+    check: "The receipt must show success. A mined but reverted transaction is not a payment." 
+  },
+  { icon: <Image src="/images/transfer-money.png" width={60} height={60} alt="" />, 
+    rule: "Confirmations", 
+    check: "Current block minus inclusion block must reach the configured threshold before the payment is final." 
+  },
+  { icon: <Image src="/images/fingerprint.png" width={60} height={60} alt="fingerprint" />, 
+    rule: "Uniqueness", 
+    check: "A transaction hash can satisfy only one payment, preventing the same transfer being claimed twice." 
+  }
 ];
 
 
 
-const paymentStates = [
-
-  { name: "Pending", detail: "Expectation exists; no matching transaction observed yet.", tone: "bg-slate-100 text-slate-600" },
-
-  { name: "Detected", detail: "A candidate transaction was found and is being evaluated.", tone: "bg-amber-50 text-amber-700" },
-
-  { name: "Confirming", detail: "Rules pass; waiting for enough block confirmations.", tone: "bg-blue-50 text-blue-700" },
-
-  { name: "Reconciled", detail: "All rules satisfied and finality threshold reached.", tone: "bg-emerald-50 text-emerald-700" },
-
-  { name: "Mismatch", detail: "Transaction found but amount, recipient, asset or network differs.", tone: "bg-red-50 text-red-700" },
-
-  { name: "Failed", detail: "Transaction reverted or was dropped from the network.", tone: "bg-red-50 text-red-700" }
-
+const reconcilationStates = [
+  {
+    name: "PENDING",
+    detail:
+      "Reconciliation record has been initialized and is awaiting transaction discovery, data retrieval, or execution of the validation process. No final reconciliation outcome has been determined yet.",
+    tone: "bg-slate-100 text-slate-600"
+  },
+  {
+    name: "MATCHED",
+    detail:
+      "Reconciliation completed successfully. The observed on-chain transaction data satisfies all configured payment expectations, including transaction status, recipient address, amount, asset, network, and required block confirmations.",
+    tone: "bg-emerald-50 text-emerald-700"
+  },
+  {
+    name: "PARTIAL",
+    detail:
+      "Reconciliation identified a valid portion of the expected payment, but the total verified amount does not fully satisfy the expected amount. The received portion is accounted for, while the remaining balance is yet to be reconciled.",
+    tone: "bg-amber-50 text-amber-700"
+  },
+  {
+    name: "MISMATCHED",
+    detail:
+      "Reconciliation completed its comparison but identified discrepancies between the expected payment parameters and the observed blockchain data. Differences may involve the recipient address, amount, asset, or network.",
+    tone: "bg-orange-50 text-orange-700"
+  },
+  {
+    name: "EXCEPTION",
+    detail:
+      "Reconciliation could not proceed to a reliable outcome because of an unexpected processing or infrastructure issue, such as RPC unavailability, missing transaction data, or an internal validation error. The record may require automated retries or manual investigation.",
+    tone: "bg-red-50 text-red-700"
+  },
+  {
+    name: "FAILED",
+    detail:
+      "The reconciliation execution terminated unsuccessfully and could not produce a valid reconciliation result. This may occur after unrecoverable processing errors, exhausted retry attempts, or a definitive transaction execution failure.",
+    tone: "bg-red-50 text-red-700"
+  }
 ];
-
 
 
 const authFlow = [
-
-  { side: "Browser", step: "User clicks connect; RainbowKit opens the wallet picker and Wagmi exposes the public address." },
-
-  { side: "Browser", step: "Frontend sends the address to the backend and asks for a sign-in challenge." },
-
-  { side: "Server", step: "Backend generates a random single-use nonce, stores it with the address and an expiry time." },
-
-  { side: "Server", step: "Backend returns a human-readable message containing the domain, address, nonce and timestamp." },
-
-  { side: "Wallet", step: "The wallet shows the message; the user signs it. The private key never leaves the wallet." },
-
-  { side: "Browser", step: "Frontend posts the message and signature to the backend." },
-
-  { side: "Server", step: "Backend recovers the signer address from the signature (Viem) and compares it with the claimed address." },
-
-  { side: "Server", step: "Nonce is checked (exists, unused, unexpired, matches message) and then consumed so it cannot be replayed." },
-
-  { side: "Server", step: "A session is created and set as an HTTP-only, Secure, SameSite cookie. The user is now signed in." }
-
+  { side: "Browser", 
+    step: "User clicks connect; RainbowKit opens the wallet picker and Wagmi exposes the public address.",
+    icons:[
+      <Image src='/images/chrome.png' width={30} height={30} alt='browser' />,
+      <Image src='/images/rainbowkit.png' width={30} height={30} alt='rainbowkit' />,
+      <Image src='/images/wagmi.png' width={30} height={30} className="rounded-full" alt='server' />
+    ]
+  },
+  { side: "Browser", 
+    step: "Frontend sends the address to the backend and asks for a sign-in challenge.", 
+    icons:[<Image src='/images/firefox.png' width={30} height={30} alt='browser' />],
+  },
+  { side: "Server", 
+    step: "Backend generates a random single-use nonce, stores it with the address and an expiry time.",
+    icons:[
+      <Image src='/images/randomhash.png' width={30} height={30} alt='hash' />,
+      <Image src='/images/viem.png' width={30} height={30} alt='server' />
+    ]
+  },
+  { side: "Server",
+    step: "Backend returns a human-readable message containing the domain, address, nonce and timestamp.",
+    icons:[<Image src='/images/database.png' width={30} height={30} alt='server' />
+  ]  },
+  { side: "Wallet", 
+    step: "The wallet shows the message; the user signs it. The private key never leaves the wallet.",
+    icons:[
+      <Image src='/images/phantom-logo.png' width={30} height={30} alt='phantom' />,
+      <Image src='/images/metamask-logo.png' width={30} height={30} alt='metamask' />,
+      <Image src='/images/tangem-logo.png' width={30} height={30} alt='server' />,
+    ]
+  },
+  { side: "Browser", 
+    step: "Frontend posts the message and signature to the backend.",
+    icons:[<Image src='/images/microsoftedge.png' width={30} height={30} alt='browser' />]
+  },
+  { side: "Server", 
+    step: "Backend recovers the signer address from the signature (Viem) and compares it with the claimed address.",
+    icons:[
+      <Image src='/images/viem.png' width={30} height={30} alt='viem' />,
+      <Image src='/images/prisma.png' width={30} height={30} alt='prisma' />
+    ]
+  },
+  { side: "Server",
+    step: "Nonce is checked (exists, unused, unexpired, matches message) and then consumed so it cannot be replayed.", 
+    icons:[
+      <Image src='/images/randomhash.png' width={30} height={30} alt='hash' />,
+      <Image src='/images/mismatch-icon.png' width={30} height={30} alt='mismatch' />
+  ]
+  },
+  { side: "Server", 
+    step: "A session is created and set as an HTTP-only, Secure, SameSite cookie. The user is now signed in.",
+    icons:[
+      <Image src='/images/jwt.png' width={30} height={30} alt='jwt' />,
+      <Image src='/images/cookie.png' width={30} height={30} alt='cookies' />
+  ]
+  }
 ];
 
 
 
 const layers = [
 
-  { icon: Globe, tag: "LAYER 01", title: "Presentation", name: "Next.js · React · Tailwind", detail: "Pages, dashboard, forms, animations. Holds no secrets and makes no trusted decisions." },
+  { icon: <Image src="/svg/nextjs.svg" width={40} height={40} alt="nextjs" />, 
+    tag: "LAYER 01", 
+    title: "Presentation", 
+    name: "Next.js · React · Tailwind", 
+    detail: "Pages, dashboard, forms, animations. Holds no secrets and makes no trusted decisions." 
+  },
 
-  { icon: Wallet, tag: "LAYER 02", title: "Wallet", name: "RainbowKit · Wagmi", detail: "Connects the user's wallet and requests signatures. Identity proof only, not an app session." },
+  { icon: <Image src="/images/rainbowkit.png" width={40} height={40} alt="rainbowkit" />, 
+    tag: "LAYER 02", 
+    title: "Wallet", 
+    name: "RainbowKit · Wagmi", 
+    detail: "Connects the user's wallet and requests signatures. Identity proof only, not an app session." 
+  },
 
-  { icon: Server, tag: "LAYER 03", title: "Application", name: "Node.js API", detail: "Verifies signatures, manages sessions, validates input, enforces ownership, runs reconciliation." },
+  { icon: <Image src="/svg/nodejs.svg" width={40} height={40} alt="nodejs" />, 
+    tag: "LAYER 03", 
+    title: "Application", 
+    name: "Node.js API", 
+    detail: "Verifies signatures, manages sessions, validates input, enforces ownership, runs reconciliation." 
+  },
 
-  { icon: Database, tag: "LAYER 04", title: "Persistence", name: "MongoDB", detail: "Users, wallets, nonces, payment expectations, transaction references and statuses." },
+  { icon: <Image src="/svg/postgreSQL.svg" width={40} height={40} alt="postgresql" />, 
+    tag: "LAYER 04", 
+    title: "Persistence", 
+    name: "PostgreSQL", 
+    detail: "Users, wallets, nonces, payment expectations, transaction references and statuses." 
+  },
 
-  { icon: Blocks, tag: "LAYER 05", title: "Blockchain", name: "Viem · Ethereum RPC", detail: "Reads transactions, receipts and block numbers. The source of truth for what happened on-chain." }
+  { icon: <Image src="/images/viem.png" width={40} height={40} alt="viem" />, 
+    tag: "LAYER 05", 
+    title: "Blockchain", 
+    name: "Viem · Ethereum RPC", 
+    detail: "Reads transactions, receipts and block numbers. The source of truth for what happened on-chain." 
+  }
 
 ];
 
@@ -238,7 +358,7 @@ const stack = [
           "Provides static type checking across the application, helping maintain consistent data structures, API request and response contracts, wallet interactions, transaction objects, and payment reconciliation logic while reducing runtime errors."
       },
       {
-        logo: <Cookie size={40} />,
+        logo: <Image src='/images/cookie.png' width={40} height={40} alt='cookie' />,
         tool: "Session Cookies",
         description:
           "HTTP-only cookie-based session management used to maintain authenticated user sessions after successful wallet-signature verification. Session tokens are sent automatically with eligible browser requests, while HTTP-only access prevents client-side JavaScript from directly reading the authentication cookie."
@@ -596,7 +716,6 @@ export function Code({ code, label }: { code:string , label:string }) {
 
 
 function Note({ children }: { children: React.ReactNode }) {
-
   return <p className="rounded-xl border border-amber-100 bg-amber-50/60 p-4 text-xs leading-6 text-amber-900/70">{children}</p>;
 
 }
@@ -608,262 +727,173 @@ function Note({ children }: { children: React.ReactNode }) {
 export default function Documentations() {
 
   const [open, setOpen] = useState<number | null>(0);
-  const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" }); // for autoscroll to sections...
 
   return (
     <main className="min-h-screen overflow-hidden bg-white font-rubik text-slate-900 selection:bg-red-100 selection:text-red-700">
-
       {/* Hero */}
-
       <section className="relative overflow-hidden border-b border-slate-100 bg-[#fcfcfd]">
-
         <div className="pointer-events-none absolute -right-40 -top-48 size-140 rounded-full border border-red-100/70" />
-
         <div className="pointer-events-none absolute -right-16 -top-24 size-82.5 rounded-full border border-red-100/70" />
-
         <div className="mx-auto grid max-w-7xl items-center gap-16 px-5 py-20 sm:px-8 sm:py-28 lg:grid-cols-[1.08fr_.92fr] lg:gap-24 xl:gap-32">
-
           <div className="relative z-10">
-
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 inline-flex items-center gap-2 rounded-full border border-red-100 bg-white px-3 py-1.5 text-[10px] font-bold tracking-[.13em] text-red-600 shadow-sm">
-
-              <span className="size-1.5 rounded-full bg-red-600" /> HOW PAYLUME WORKS
-
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 inline-flex items-center gap-2 rounded-full border border-red-100 bg-white p-3 text-[10px] font-bold text-red-600 shadow-sm">
+              <Activebeep /><span className="rounded-full">HOW PAYLUME WORKS</span>
             </motion.div>
-
-            <motion.h1 initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="max-w-2xl text-4xl font-semibold leading-[1.12] tracking-[-.045em] text-slate-950 sm:text-5xl lg:text-[60px]">
-
-              The logic behind every <span className="text-red-600">reconciled payment.</span>
-
+            <motion.h1 initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="max-w-2xl text-4xl font-semibold text-slate-950 sm:text-5xl">
+              The tech logic documented behind every <span className="text-red-600">reconciled transaction.</span>
             </motion.h1>
-
-            <p className="mt-6 max-w-xl text-sm leading-8 text-slate-500 sm:text-base">
-
-              Paylume is a crypto payment reconciliation tool for Ethereum. This page walks through how it proves who you are, reads the blockchain, matches transactions to expected payments, and stores the result.
-
+            <p className="mt-3 mx-3 max-w-2xl text-xs text-slate-500 sm:text-base">
+            Welcome to the Paylume documentation. This guide provides a comprehensive overview of how Paylume handles wallet authentication, blockchain data retrieval, payment verification, transaction reconciliation, and persistent record management on the Ethereum network.Explore the underlying architecture and workflows to understand how incoming blockchain transactions are identified, validated, matched against expected payments, and securely stored.
             </p>
-
+            
             <div className="mt-9 flex flex-wrap gap-3">
+              {/* Core Logic */}
+              <button
+                onClick={() => scrollTo("reconciliation")}
+                className="group relative inline-flex flex-1 cursor-pointer items-center justify-center gap-3 overflow-hidden rounded-full bg-zinc-950 px-6 py-3.5 text-sm font-semibold text-white shadow-md shadow-zinc-900/10 transition-all duration-300 hover:-translate-y-1 hover:bg-zinc-800 hover:shadow-xl hover:shadow-zinc-900/20 active:translate-y-0"
+              >
+                <BrainCircuitIcon
+                  size={24}
+                  className="transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110"
+                />
+                <span>Paylume's Core Logic</span>
+                <span className="inline-flex translate-x-0 opacity-0 transition-all duration-300 group-hover:translate-x-1.5 group-hover:opacity-100">
+                  <ArrowRightCircleIcon />
+                </span>
+              </button>
 
-              <button onClick={() => scrollTo("reconciliation")} className="inline-flex h-12 items-center gap-2 rounded-xl bg-red-600 px-5 text-xs font-semibold text-white shadow-lg shadow-red-600/20 transition hover:bg-red-700">See the core logic <ArrowRight size={15} /></button>
-
-              <button onClick={() => scrollTo("architecture")} className="inline-flex h-12 items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50">View architecture <Network size={15} /></button>
-
+              {/* Architecture */}
+              <button
+                onClick={() => scrollTo("architecture")}
+                className="group relative inline-flex flex-1 cursor-pointer items-center justify-center gap-3 overflow-hidden rounded-full border border-zinc-200 bg-white px-6 py-3.5 text-sm font-semibold text-zinc-700 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-zinc-300 hover:bg-zinc-50 hover:shadow-xl hover:shadow-zinc-900/5 active:translate-y-0"
+              >
+                <Network
+                  size={24}
+                  className="transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6"
+                />
+                <span>Process Architecture</span>
+                <span className="inline-flex translate-x-0 opacity-0 transition-all duration-300 group-hover:translate-x-1.5 group-hover:opacity-100">
+                  <ArrowRightCircleIcon />
+                </span>
+              </button>
             </div>
-
           </div>
 
-
-
           <motion.div initial={{ opacity: 0, scale: 0.97, y: 12 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ delay: 0.12 }} className="relative mx-auto w-full max-w-135">
-
             <div className="rounded-[26px] border border-slate-200 bg-white p-4 shadow-2xl shadow-slate-900/[.07] sm:p-6">
-
               <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-
-                <div className="flex items-center gap-2"><span className="flex size-7 items-center justify-center rounded-lg bg-red-600 text-white"><Blocks size={14} /></span><span className="text-xs font-bold">Paylume in one view</span></div>
-
-                <span className="rounded-full bg-slate-50 px-2.5 py-1 text-[9px] font-semibold text-slate-400">OVERVIEW</span>
-
+                <div className="flex items-center gap-2">
+                  <span className="flex p-2 items-center justify-center rounded-full text-white">
+                    <Image src="/images/paylume-icon.png" width={40} height={40} alt='paylume-icon' />
+                  </span>
+                  <span className="text-xs font-bold">Paylume in one view</span>
+                </div>
+                <span className="rounded-full bg-zinc-100 px-3 py-2 text-[10px] font-semibold text-zinc-400">OVERVIEW</span>
               </div>
-
               <div className="space-y-2.5 py-5">
-
-                {[
-
-                  { icon: Wallet, t: "1 · Prove identity", d: "Sign a nonce with your wallet" },
-
-                  { icon: FileCode2, t: "2 · Define expectation", d: "Amount · recipient · asset · network" },
-
-                  { icon: Globe, t: "3 · Observe the chain", d: "Fetch transaction + receipt via RPC" },
-
-                  { icon: GitBranch, t: "4 · Match rules", d: "Compare observed vs expected" },
-
-                  { icon: Check, t: "5 · Reconcile", d: "Wait for confirmations, store result" }
-
-                ].map(n => {
-
-                  const Icon = n.icon;
-
+                {overviewCard.map(n => {
                   return (
-
                     <div key={n.t} className="flex items-center gap-3 rounded-xl border border-slate-100 p-3.5">
-
-                      <span className="flex size-9 items-center justify-center rounded-lg bg-red-50 text-red-600"><Icon size={17} /></span>
-
+                      <span className="flex size-9 items-center justify-center rounded-lg bg-red-50 text-red-600">{n.icon}</span>
                       <div><p className="text-xs font-semibold text-slate-800">{n.t}</p><p className="mt-1 text-[10px] text-slate-400">{n.d}</p></div>
-
                     </div>
-
                   );
-
                 })}
-
               </div>
-
             </div>
-
           </motion.div>
-
         </div>
-
       </section>
-
 
 
       {/* Problem */}
-
       <section className="mx-auto max-w-7xl px-5 py-24 sm:px-8 sm:py-28">
-
         <div className="grid gap-14 lg:grid-cols-[.9fr_1.1fr] lg:gap-24 xl:gap-32">
-
-          <Heading eyebrow="THE PROBLEM" title="Blockchain payments don't arrive as invoices." description="Traditional processors hand you structured records. On Ethereum you receive raw transactions, and your application must work out which payment each one belongs to." />
-
+          <Heading eyebrow="THE PROBLEM" title="Raw blockchain transaction data is complicated without normalization" description="Traditional processors hand you structured records. On Ethereum you receive raw transactions, and your application must work out which payment each one belongs to." />
           <div className="space-y-4 text-sm leading-7 text-slate-600">
-
             <p>A business may expect 0.5 ETH from a customer. The chain only shows that some address sent some value to some address in some block. It says nothing about which order that was for.</p>
-
-            <p>Paylume closes that gap. It stores what you expect to receive, reads what actually happened on-chain, applies explicit matching rules, and records the verdict, so every payment has a clear, auditable status.</p>
-
+            <p>Paylume closes that gap. It stores what you expect to receive, reads what actually happened on-chain, applies explicit matching rules, and records the verdict, so every payment has a clear auditable status & description...</p>
           </div>
-
         </div>
-
       </section>
-
 
 
       {/* Reconciliation */}
-
       <section id="reconciliation" className="scroll-mt-8 border-y border-slate-100 bg-[#fafafa]">
-
         <div className="mx-auto max-w-7xl px-5 py-24 sm:px-8 lg:py-28">
-
           <div className="grid gap-16 lg:grid-cols-[.82fr_1.18fr] lg:gap-24 xl:gap-32">
-
             <div>
-
               <Heading eyebrow="CORE ENGINE" title="How reconciliation actually works." description="Reconciliation compares an expected payment with transaction data observed on Ethereum, then decides whether the two agree." />
-
               <div className="mt-7 space-y-4 text-sm leading-7 text-slate-600">
-
                 <p>A successful transaction is not automatically a correct payment. Paylume only reconciles when every configured rule passes and the transaction is final enough.</p>
 
               </div>
-
-              <div className="mt-7 flex items-center gap-3 rounded-xl border border-red-100 bg-white p-4">
-
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-red-50 text-red-600"><GitBranch size={17} /></span>
-
+              <div className="mt-7 flex items-center gap-3 rounded-xl hover:shadow-md border border-red-100 bg-white p-4">
+                <span className="flex shrink-0 items-center justify-center rounded-full bg-red-50 text-red-600 p-3">
+                  <GitBranch size={30} />
+                </span>
                 <p className="text-xs leading-6 text-slate-600">A transaction hash identifies a transaction. It does not prove the expected payment was satisfied.</p>
-
               </div>
-
             </div>
-
             <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-[0_18px_60px_-35px_rgba(15,23,42,0.22)] sm:p-8">
-
               <p className="text-[10px] font-bold tracking-wider text-red-600">PAYMENT LIFECYCLE</p>
 
-              <h3 className="mb-6 mt-1 text-base font-semibold">From expectation to reconciled record</h3>
-
+              <h3 className="mb-6 mt-1 text-base font-semibold">From invoice to reconciled record</h3>
               <Flow steps={reconciliationFlow} />
-
             </div>
-
           </div>
-
-
 
           <div className="mt-16">
-
             <Heading eyebrow="MATCHING RULES" title="Seven checks decide the outcome." />
-
             <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-
               {matchingRules.map((r, i) => {
-
-                const Icon = r.icon;
-
                 return (
-
                   <motion.div key={r.rule} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.03 }} className="rounded-2xl border border-slate-200/80 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-red-100 hover:shadow-lg hover:shadow-slate-900/4">
-
-                    <span className="flex size-10 items-center justify-center rounded-xl bg-red-50 text-red-600"><Icon size={19} /></span>
-
-                    <h4 className="mt-4 text-sm font-semibold">{r.rule}</h4>
-
-                    <p className="mt-2 text-xs leading-6 text-slate-500">{r.check}</p>
-
+                    <div className="flex items-center justify-start gap-2">
+                      <span className="flex w-fit p-2 items-center justify-center rounded-full bg-red-50 text-red-600">
+                        {r.icon}
+                      </span>
+                      <h4 className="mt-4 text-xl font-semibold">{r.rule}</h4>
+                    </div>
+                    <p className="mt-2 text-sm leading-6 text-slate-500">{r.check}</p>
                   </motion.div>
-
                 );
-
               })}
-
             </div>
-
           </div>
-
-
 
           <div className="mt-16 grid gap-8 lg:grid-cols-2">
-
             <div>
-
-              <Heading eyebrow="PAYMENT STATES" title="Every payment is always in one state." />
-
+              <Heading eyebrow="RECONCILIATION STATES" title="Every reconciliation record can't be tampered..." />
               <div className="mt-6 space-y-2">
-
-                {paymentStates.map(s => (
-
+                {reconcilationStates.map(s => (
                   <div key={s.name} className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3.5">
-
-                    <span className={`rounded-md px-2.5 py-1 text-[10px] font-bold ${s.tone}`}>{s.name}</span>
-
+                    <span className={`rounded-full px-2.5 py-1.5 text-[10px] font-bold ${s.tone}`}>{s.name}</span>
                     <p className="text-xs leading-6 text-slate-500">{s.detail}</p>
-
                   </div>
-
                 ))}
-
               </div>
-
             </div>
-
             <div>
-
               <Heading eyebrow="IN CODE" title="The check, simplified." />
-
-              <div className="mt-6"><Code code={verifyCode} label="Illustrative reconciliation logic" /></div>
-
+              <div className="mt-6">
+                <Code code={verifyCode} label="Illustrative reconciliation logic" />
+              </div>
             </div>
-
           </div>
-
         </div>
-
       </section>
 
 
-
       {/* Architecture */}
-
       <section id="architecture" className="mx-auto max-w-7xl scroll-mt-8 px-5 py-20 sm:px-8 sm:py-24">
-
-        <Heading eyebrow="ARCHITECTURE" title="Five layers, each with one job." description="Separating presentation, wallet, application logic, storage and blockchain access keeps trusted decisions on the server and makes each part easier to reason about." />
-
+        <Heading eyebrow="ARCHITECTURE" title="Five layers, each with one paticular job..." description="Separating presentation, wallet, application logic, storage and blockchain access keeps trusted decisions on the server and makes each part easier to reason about." />
         <div className="mt-12 grid gap-3 lg:grid-cols-5">
-
           {layers.map((l, i) => {
-
-            const Icon = l.icon;
-
             return (
-
               <div key={l.title} className="relative rounded-2xl border border-slate-200/80 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-red-100 hover:shadow-lg hover:shadow-slate-900/4">
-
-                <div className="flex items-center justify-between"><span className="flex size-10 items-center justify-center rounded-xl bg-red-50 text-red-600"><Icon size={19} /></span><span className="text-[10px] font-bold text-slate-300">{l.tag}</span></div>
+                <div className="flex items-center justify-between"><span className="flex size-10 items-center justify-center rounded-xl bg-red-50 text-red-600">{l.icon}</span><span className="text-[10px] font-bold text-slate-300">{l.tag}</span></div>
 
                 <p className="mt-5 text-[10px] font-bold tracking-wider text-red-600">{l.title.toUpperCase()}</p>
 
@@ -872,74 +902,51 @@ export default function Documentations() {
                 <p className="mt-2 text-xs leading-6 text-slate-500">{l.detail}</p>
 
                 {i < layers.length - 1 && <ArrowRight className="absolute -right-4.25 top-1/2 z-10 hidden -translate-y-1/2 text-red-300 lg:block" size={18} />}
-
               </div>
-
             );
-
           })}
-
         </div>
 
-
-
         <div className="mt-12 grid gap-12 lg:grid-cols-[1.05fr_.95fr] lg:gap-20 xl:gap-28">
-
           <div className="rounded-2xl border border-slate-200 bg-[#fcfcfd] p-5 sm:p-7">
-
             <p className="text-[10px] font-bold tracking-wider text-red-600">REQUEST LIFECYCLE</p>
 
             <h3 className="mb-5 mt-1 text-base font-semibold">What happens on every action</h3>
 
             <Flow steps={requestFlow} compact />
-
           </div>
-
           <div className="space-y-4">
-
             <div className="rounded-2xl border border-slate-200 p-5">
-
-              <h3 className="text-sm font-semibold">Two sources of truth, two roles</h3>
-
-              <p className="mt-2 text-xs leading-6 text-slate-500">Ethereum is the authority on what happened on-chain. MongoDB is the authority on what the application expects and what it concluded. Paylume stores transaction references and results; it never replaces the chain's record.</p>
-
+              <section className="flex items-center justify-start gap-2">
+                <KeyRound size={20} />
+               <h3 className="text-sm font-semibold">Two sources of truth, two roles</h3>
+              </section>
+              <p className="mt-2 text-xs leading-6 text-slate-500">Ethereum is the authority on what happened on-chain. PostgreSQL is the authority on what the application expects and what it concluded. Paylume stores transaction references and results; it never replaces the chain's record.</p>
             </div>
-
             <div className="rounded-2xl border border-slate-200 p-5">
-
-              <h3 className="text-sm font-semibold">The frontend is never trusted</h3>
-
+              <section className="flex items-center justify-start gap-2">
+                <Image src="/images/react.png" width={20} height={20} alt='ui' />
+                <h3 className="text-sm font-semibold">The frontend is never trusted</h3>
+              </section>
               <p className="mt-2 text-xs leading-6 text-slate-500">Authentication, authorization and reconciliation decisions all run on the server. The browser only displays results and requests signatures.</p>
-
             </div>
-
           </div>
-
         </div>
-
       </section>
 
 
 
       {/* Authentication */}
-      {/*  Start from here */}
       <section id="authentication" className="scroll-mt-8 border-y border-slate-100 bg-[#fafafa]">
-
         <div className="mx-auto grid max-w-7xl gap-16 px-5 py-24 sm:px-8 lg:grid-cols-[.82fr_1.18fr] lg:gap-24 lg:py-28 xl:gap-32">
-
           <div>
-
-            <Heading eyebrow="AUTHENTICATION" title="Prove wallet ownership without a password." description="Sign-in uses a server-issued challenge and a cryptographic signature. The private key never leaves the wallet." />
-
+            <Heading eyebrow="AUTHENTICATION" title="Register & create account through your wallet..." description="Sign-in OR Sign-up uses a server-issued challenge and a cryptographic signature. The private key never leaves the wallet." />
             <div className="mt-7 space-y-4 text-sm leading-7 text-slate-600">
-
               <p>Connecting a wallet only reveals a public address, which anyone could type in. Signing a fresh challenge is what proves control of that address.</p>
 
               <p>Only after the backend verifies the signature does it create a session, which is a separate, server-managed credential.</p>
-
             </div>
-
-            <div className="mt-7 rounded-xl border border-slate-200/80 bg-white p-5 transition-colors duration-200 hover:border-slate-300">
+            <div className="mt-7 rounded-xl border border-slate-200/80 bg-white p-5 shadow-lg transition-colors duration-200 hover:border-slate-300">
               <div className="flex items-center gap-2 text-xs font-semibold"><ShieldCheck size={16} className="text-red-600" /> Properties the flow enforces</div>
               <ul className="mt-3 space-y-2 text-xs leading-6 text-slate-500">
                 <li>• Nonce is random and single-use.</li>
@@ -952,49 +959,40 @@ export default function Documentations() {
 
                 <li>• Replayed signatures are rejected.</li>
               </ul>
-
             </div>
-
           </div>
-
           <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-[0_18px_60px_-35px_rgba(15,23,42,0.22)] sm:p-8">
-
-            <p className="text-[10px] font-bold tracking-wider text-red-600">SIGN-IN LIFECYCLE</p>
-
-            <h3 className="mb-6 mt-1 text-base font-semibold">Who does what, step by step</h3>
-
+            <p className="text-[10px] font-bold tracking-wider text-red-600">AUTHENTICATION LIFECYCLE</p>
+            <h3 className="mb-6 mt-1 text-base font-semibold">Who does what, step by step architechture</h3>
             <div className="space-y-2">
-
               {authFlow.map((a, i) => (
-
                 <React.Fragment key={a.step}>
-
-                  <div className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3">
-
-                    <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-red-50 text-[11px] font-bold text-red-600">{String(i + 1).padStart(2, "0")}</span>
-
+                  <div className="flex items-start gap-3 rounded-xl border border-slate-200 hover:shadow-md bg-white px-4 py-3">
+                    <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-red-50 text-[11px] font-bold text-red-600">{String(i + 1).padStart(2, "0")}</span>
                     <div className="flex-1">
-
-                      <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[9px] font-bold tracking-wider text-slate-500">{a.side.toUpperCase()}</span>
-
+                      <section className="flex items-center justify-between">
+                        <div className="bg-slate-100 px-2.5 py-1.5 rounded-full text-[9px] font-bold tracking-wider text-slate-500">
+                          {a.side.toUpperCase()}
+                        </div>
+                        <div className="border border-gray-300 flex items-center justify-center rounded-full p-2 gap-2">
+                          {a.icons.map((icon,i) =>  
+                            <span key={i} className="rounded-full" >{icon}</span>
+                          )}
+                        </div>
+                      </section>
                       <p className="mt-1 text-sm font-medium leading-6 text-slate-700">{a.step}</p>
-
                     </div>
-
                   </div>
-
-                  {i < authFlow.length - 1 && <div className="flex h-3 items-center pl-6"><ArrowDown size={14} className="text-red-300" /></div>}
-
+                  {i < authFlow.length - 1 && (
+                    <div className="flex w-fit items-center rounded-full p-2 ml-3">
+                      <ArrowDown size={24} className="text-red-500" />
+                    </div>
+                  )}
                 </React.Fragment>
-
               ))}
-
             </div>
-
           </div>
-
         </div>
-
       </section>
 
 
@@ -1052,6 +1050,9 @@ export default function Documentations() {
       <section id="security" className="mx-auto max-w-7xl scroll-mt-8 px-5 py-20 sm:px-8 sm:py-24">
         <div className="grid gap-14 lg:grid-cols-[.9fr_1.1fr] lg:gap-24 xl:gap-32">
           <div>
+            <section>
+              <Activebeep />
+            </section>
             <Heading eyebrow="SECURITY" title="Principles protecting accounts and payments." />
             <ul className="mt-7 space-y-3">
               {securityItems.map(s => (

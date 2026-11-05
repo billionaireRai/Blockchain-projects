@@ -86,6 +86,7 @@ enum ReconciliationStatus {
   PARTIAL
   MISMATCHED
   EXCEPTION
+  FAILED
 }
 
 enum WorkspaceStatus {
