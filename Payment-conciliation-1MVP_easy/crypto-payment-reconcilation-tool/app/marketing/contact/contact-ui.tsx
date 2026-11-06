@@ -1,109 +1,130 @@
+'use client'
 
-import React from "react";
-import { ArrowUpRight, MessageSquare, BriefcaseBusiness, Handshake, Lightbulb, Mail, Send, Sparkles, Clock3, ShieldCheck, Code2, ChevronDown } from "lucide-react";
+import React,{ useState } from "react";
+import { scrollTo } from "@/lib/autoscroll.utils";
+import { useForm } from 'react-hook-form';
+import { ArrowUpRight, MessageSquare, BriefcaseBusiness, Handshake, Lightbulb, Mail, Send, Sparkles, Clock3, ShieldCheck, Code2, ChevronDown, ArrowRightCircleIcon, MessagesSquareIcon } from "lucide-react";
+import Optioncard,{ OptionType } from "@/components/optioncard";
+
 
 const opportunities = [
   {
     icon: BriefcaseBusiness,
     title: "Professional Work",
-    description:
-      "Have a project, technical challenge, or an idea that needs the right engineering approach? Let's discuss how we can work together.",
+    description:"Have a project, technical challenge, or an idea that needs the right engineering approach? Let's discuss how we can work together.",
   },
   {
     icon: Handshake,
     title: "Business & Partnerships",
-    description:
-      "Interested in collaborating, exploring integrations, or building something valuable together? I'd love to hear about it.",
+    description:"Interested in collaborating, exploring integrations, or building something valuable together? I'd love to hear about it.",
   },
   {
     icon: Lightbulb,
     title: "Product Feedback",
-    description:
-      "Tried Paylume and have suggestions, ideas, or feedback? Your perspective can help shape what comes next.",
+    description:"Tried Paylume and have suggestions, ideas, or feedback? Your perspective can help shape what comes next.",
+  },
+];
+
+
+const inquiryOptions = [
+  {
+    value: "professional-work",
+    label: "Professional Work",
+  },
+  {
+    value: "business-partnership",
+    label: "Business & Partnerships",
+  },
+  {
+    value: "collaboration",
+    label: "Collaboration",
+  },
+  {
+    value: "product-feedback",
+    label: "Product Feedback",
+  },
+  {
+    value: "other",
+    label: "Something Else",
   },
 ];
 
 export function Contact() {
+const { register , handleSubmit , formState:{ errors , isSubmitting } } = useForm() ;
+const [selectedInquiry, setSelectedInquiry] = useState<OptionType>({
+    value: "other",
+    label: "Something Else",
+});
+
   return (
     <main className="relative overflow-hidden bg-white text-zinc-950">
-
       {/* Background decoration */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-52 left-1/2 h-125 w-175 -translate-x-1/2 rounded-full bg-zinc-100/80 blur-[120px]" />
+        <div className="absolute -top-45 left-1/2 h-125 w-175 -translate-x-1/2 rounded-full bg-zinc-100/80 blur-[120px]" />
         <div className="absolute -right-50 top-225 h-100 w-100 rounded-full bg-zinc-100/70 blur-[110px]" />
       </div>
 
       {/* Hero */}
       <section className="relative mx-auto max-w-7xl px-5 pb-16 pt-24 sm:px-8 sm:pt-32 lg:px-12">
-
         <div className="mx-auto max-w-3xl text-center">
-
           <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white/80 px-4 py-2 text-xs font-semibold tracking-wide text-zinc-600 shadow-sm backdrop-blur-md">
-            <span className="relative flex h-2 w-2">
+            <span className="relative flex items-center justify-center h-4 w-4">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
             </span>
-            OPEN TO MEANINGFUL COLLABORATIONS
+            <span>OPEN TO MEANINGFUL COLLABORATIONS</span>
           </div>
-
           <h1 className="text-4xl font-semibold leading-[1.12] tracking-tight sm:text-5xl md:text-6xl">
             Good things start with
             <span className="mt-2 block text-zinc-400">
               a conversation.
             </span>
           </h1>
-
-          <p className="mx-auto mt-7 max-w-2xl text-base leading-8 text-zinc-500 sm:text-lg">
+          <p className="mx-auto mt-7 max-w-xl text-zinc-500 sm:text-md">
             Enjoying Paylume? Have an interesting project, a business
-            opportunity, or an idea worth exploring? I'd love to hear
+            opportunity, or an idea in your mind worth exploring ? we'vd love to hear
             from you. Let's connect and create something meaningful.
           </p>
-
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-            <a
-              href="#contact-form"
-              className="group inline-flex items-center gap-2 rounded-full bg-zinc-950 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-zinc-950/10 transition-all duration-300 hover:-translate-y-1 hover:bg-zinc-800 hover:shadow-xl"
+            <button
+              onClick={() => scrollTo('contact')}
+              className="group cursor-pointer inline-flex items-center justify-center gap-2 rounded-full bg-zinc-950 px-6 py-4 text-sm font-semibold text-white shadow-md shadow-zinc-950/10 transition-all duration-300 hover:-translate-y-1 hover:bg-zinc-800 hover:shadow-xl"
             >
-              Start a conversation
-              <ArrowUpRight
-                size={17}
-                className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
+              <span>Start a conversation</span>
+              <ArrowRightCircleIcon
+                size={20}
+                className="transition-all duration-300 group-hover:translate-x-1.5 -translate-x-1 scale-90 group-hover:scale-110"
               />
-            </a>
-
-            <a
-              href="#opportunities"
-              className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-6 py-3.5 text-sm font-semibold text-zinc-700 transition-all duration-300 hover:-translate-y-1 hover:bg-zinc-50 hover:shadow-md"
+            </button>
+            <button
+              onClick={() => scrollTo('opportunities')}
+              className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-full border border-zinc-200 bg-white px-6 py-3.5 text-sm font-semibold text-zinc-700 transition-all duration-300 hover:-translate-y-1 hover:bg-zinc-50 hover:shadow-md"
             >
-              Explore opportunities
-            </a>
+              <span>Explore opportunities</span>
+            </button>
           </div>
-
         </div>
       </section>
 
+
       {/* Contact cards */}
-      <section
-        id="opportunities"
-        className="relative mx-auto max-w-7xl px-5 py-12 sm:px-8 lg:px-12"
-      >
+      <section id="opportunities" className="relative mx-auto max-w-7xl px-5 py-12 sm:px-8 lg:px-12">
         <div className="mb-10">
           <p className="text-xs font-bold tracking-[0.2em] text-zinc-400">
             LET'S CONNECT
           </p>
           <h2 className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">
-            What would you like to discuss?
+            What would you like to discuss ?
           </h2>
-          <p className="mt-3 max-w-xl text-sm leading-7 text-zinc-500">
+          <p className="mt-3 max-w-xl text-md leading-7 text-zinc-500">
             Whether you're here for business, collaboration, or simply
-            to share an idea, there's always room for a good conversation.
+            share an idea to convert in a platform , there's always room for a good conversation between us...
           </p>
         </div>
 
         <div className="grid gap-5 md:grid-cols-3">
           {opportunities.map((item) => {
             const Icon = item.icon;
-
             return (
               <div
                 key={item.title}
@@ -121,13 +142,13 @@ export function Contact() {
                   {item.description}
                 </p>
 
-                <a
-                  href="#contact-form"
-                  className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-zinc-800 transition-colors hover:text-zinc-500"
+                <button
+                  onClick={() => scrollTo('contact')}
+                  className="mt-7 inline-flex cursor-pointer items-center gap-2 text-sm px-4 py-2 rounded-full font-semibold text-zinc-800 transition-colors hover:bg-zinc-100 border border-zinc-300 hover:border-zinc-400"
                 >
                   Let's talk
                   <ArrowUpRight size={16} />
-                </a>
+                </button>
               </div>
             );
           })}
@@ -135,37 +156,27 @@ export function Contact() {
       </section>
 
       {/* Main contact form */}
-      <section
-        id="contact-form"
-        className="relative mx-auto max-w-7xl px-5 py-20 sm:px-8 lg:px-12"
-      >
+      <section id="contact" className="relative mx-auto max-w-7xl px-5 py-20 sm:px-8 lg:px-12" >
         <div className="grid overflow-hidden rounded-4xl border border-zinc-200 bg-white shadow-2xl shadow-zinc-900/4 lg:grid-cols-[0.85fr_1.15fr]">
-
           {/* Left panel */}
           <div className="relative overflow-hidden bg-zinc-950 p-8 text-white sm:p-12 lg:p-14">
-
-            <div className="pointer-events-none absolute -right-28 -top-28 h-80 w-80 rounded-full border border-white/[0.07]" />
-            <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full border border-white/[0.07]" />
-
+            <div className="pointer-events-none absolute -right-30 -top-30 h-80 w-80 rounded-full border border-white/[0.07]" />
+            <div className="pointer-events-none absolute -right-19 -top-19 h-56 w-56 rounded-full border border-white/[0.07]" />
             <div className="relative z-10">
               <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/6 px-3 py-1.5 text-xs font-medium text-zinc-300">
                 <MessageSquare size={14} />
-                GET IN TOUCH
+                <span>GET IN TOUCH</span>
               </div>
-
-              <h2 className="mt-10 max-w-sm text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
+              <h2 className="mt-7 max-w-sm text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
                 Have something
                 <span className="block text-zinc-500">in mind?</span>
               </h2>
-
-              <p className="mt-6 max-w-sm text-sm leading-8 text-zinc-400">
+              <p className="mt-4 max-w-sm text-sm leading-8 text-zinc-400">
                 Every meaningful collaboration begins somewhere.
                 Share what's on your mind and let's see where the
                 conversation takes us.
               </p>
-
               <div className="mt-12 space-y-7">
-
                 <div className="flex items-start gap-4">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/6">
                     <Mail size={18} />
@@ -179,7 +190,6 @@ export function Contact() {
                     </p>
                   </div>
                 </div>
-
                 <div className="flex items-start gap-4">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/6">
                     <Clock3 size={18} />
@@ -193,7 +203,6 @@ export function Contact() {
                     </p>
                   </div>
                 </div>
-
                 <div className="flex items-start gap-4">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/6">
                     <ShieldCheck size={18} />
@@ -207,7 +216,6 @@ export function Contact() {
                     </p>
                   </div>
                 </div>
-
               </div>
 
               <div className="mt-16 border-t border-white/10 pt-7">
@@ -227,23 +235,23 @@ export function Contact() {
 
           {/* Right panel - Form */}
           <div className="p-8 sm:p-12 lg:p-14">
-
             <div>
-              <h3 className="text-2xl font-semibold tracking-tight">
-                Send an inquiry
-              </h3>
+              <header className="flex items-center justify-start gap-2">
+                <MessagesSquareIcon size={30} />
+                <h3 className="text-2xl font-semibold tracking-tight">
+                  Send an inquiry
+                </h3>
+              </header>
               <p className="mt-2 text-sm leading-7 text-zinc-500">
                 Tell me a little about yourself and what you'd like to
                 discuss.
               </p>
             </div>
-
             <form
               action="/api/contact"
               method="POST"
               className="mt-9 space-y-6"
             >
-
               <div className="grid gap-5 sm:grid-cols-2">
 
                 <div>
@@ -260,7 +268,7 @@ export function Contact() {
                     placeholder="John Doe"
                     autoComplete="name"
                     required
-                    className="w-full rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 py-3.5 text-sm outline-none transition-all placeholder:text-zinc-400 hover:border-zinc-300 focus:border-zinc-950 focus:bg-white focus:ring-4 focus:ring-zinc-950/5"
+                    className="w-full rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 py-3.5 text-sm outline-none transition-all placeholder:text-zinc-400 hover:border-zinc-300 focus:border-zinc-950 focus:bg-white focus:ring-3 focus:ring-zinc-900/10"
                   />
                 </div>
 
@@ -278,13 +286,10 @@ export function Contact() {
                     placeholder="john@example.com"
                     autoComplete="email"
                     required
-                    className="w-full rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 py-3.5 text-sm outline-none transition-all placeholder:text-zinc-400 hover:border-zinc-300 focus:border-zinc-950 focus:bg-white focus:ring-4 focus:ring-zinc-950/5"
+                    className="w-full rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 py-3.5 text-sm outline-none transition-all placeholder:text-zinc-400 hover:border-zinc-300 focus:border-zinc-950 focus:bg-white focus:ring-3 focus:ring-zinc-900/10"
                   />
                 </div>
-
-              </div>
-
-              <div>
+              <div className="p-2 w-full">
                 <label
                   htmlFor="inquiry"
                   className="mb-2.5 block text-sm font-semibold text-zinc-700"
@@ -292,42 +297,13 @@ export function Contact() {
                   What would you like to discuss?
                   <span className="ml-1 text-red-500">*</span>
                 </label>
-
-                <div className="relative">
-                  <select
-                    id="inquiry"
-                    name="inquiry"
-                    required
-                    defaultValue=""
-                    className="w-full appearance-none rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 py-3.5 pr-11 text-sm text-zinc-600 outline-none transition-all hover:border-zinc-300 focus:border-zinc-950 focus:bg-white focus:ring-4 focus:ring-zinc-950/5"
-                  >
-                    <option value="" disabled>
-                      Select an inquiry type
-                    </option>
-                    <option value="professional-work">
-                      Professional Work
-                    </option>
-                    <option value="business-partnership">
-                      Business & Partnerships
-                    </option>
-                    <option value="collaboration">
-                      Collaboration
-                    </option>
-                    <option value="product-feedback">
-                      Product Feedback
-                    </option>
-                    <option value="other">
-                      Something Else
-                    </option>
-                  </select>
-
-                  <ChevronDown
-                    size={17}
-                    className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400"
+                  <Optioncard
+                    options={inquiryOptions}
+                    selectedValue={selectedInquiry}
+                    onChange={(option: OptionType) =>  setSelectedInquiry(option) }
                   />
                 </div>
               </div>
-
               <div>
                 <label
                   htmlFor="subject"
@@ -340,7 +316,7 @@ export function Contact() {
                   name="subject"
                   type="text"
                   placeholder="A brief introduction to your inquiry"
-                  className="w-full rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 py-3.5 text-sm outline-none transition-all placeholder:text-zinc-400 hover:border-zinc-300 focus:border-zinc-950 focus:bg-white focus:ring-4 focus:ring-zinc-950/5"
+                  className="w-full rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 py-3.5 text-sm outline-none transition-all placeholder:text-zinc-400 hover:border-zinc-300 focus:border-zinc-950 focus:bg-white focus:ring-3 focus:ring-zinc-900/10"
                 />
               </div>
 
@@ -363,7 +339,7 @@ export function Contact() {
                   rows={6}
                   required
                   placeholder="Hey! I recently came across Paylume and really liked what you're building. I'd love to discuss..."
-                  className="w-full resize-y rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 py-3.5 text-sm leading-7 outline-none transition-all placeholder:text-zinc-400 hover:border-zinc-300 focus:border-zinc-950 focus:bg-white focus:ring-4 focus:ring-zinc-950/5"
+                  className="w-full resize-y rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 py-3.5 text-sm leading-7 outline-none transition-all placeholder:text-zinc-400 hover:border-zinc-300 focus:border-zinc-950 focus:bg-white focus:ring-3 focus:ring-zinc-900/10"
                 />
               </div>
 
@@ -408,7 +384,6 @@ export function Contact() {
         </div>
 
         <div className="mt-10 divide-y divide-zinc-200 border-y border-zinc-200">
-
           {[
             {
               question: "Can I reach out for professional work?",

@@ -236,6 +236,14 @@ enum PaymentStatus {
   REFUNDED
 }
 
+enum InquiryType {
+  PROFESSIONAL_WORK
+  BUSINESS_PARTNERSHIP
+  COLLABORATION
+  PRODUCT_FEEDBACK
+  OTHERS
+}
+
 model Transactions {
   recordId String @id @default("txn_`${uuid()}`")
 
@@ -602,7 +610,7 @@ model Subscription {
 
 
 model SubscriptionPayment {
-  recordId                String        @id @default(cuid())
+  recordId          String        @id @default(uuid())
 
   subscriptionId    String
   subscription      Subscription  @relation(fields: [subscriptionId], references: [recordId])
@@ -625,4 +633,17 @@ model SubscriptionPayment {
 
   @@index([subscriptionId])
   @@index([status])
+}
+
+model Inquiries {
+  recordId      String          @id @default(uuid())
+
+  name          String          
+  email         String          @unique
+
+  type          InquiryType     @default(OTHERS)
+  subject       String
+
+  message       String 
+
 }

@@ -1,23 +1,21 @@
 'use client'
 
-import { Trash2 , AlertTriangle , X, LoaderCircleIcon, LogOutIcon } from 'lucide-react';
+import { X , LogOutIcon } from 'lucide-react';
 import Modal from './Modal';
 import { useGlobalUI } from '@/states/ui.state';
 import { useState } from 'react';
 import { MiniLoader } from './MiniLoader';
+import { handleLogoutTrigger } from '@/lib/logout.utils';
 
-interface DeleteModalProps {
-    LogoutTrigger:() => void ;
-}
 
-export function LogoutModal ({ LogoutTrigger } : DeleteModalProps ) {
+export function LogoutModal () {
   const [isLoggingOut, setisLoggingOut] = useState<boolean>(false) ;
   const { logoutModal , setlogoutModal } = useGlobalUI() ; // ui states hook initialization...
 
   // fucntion for deletion...
   async function handleLogoutLogic() : Promise<void> {
     setisLoggingOut(true);
-    LogoutTrigger() ;
+    handleLogoutTrigger(); 
   }
 
   if (!logoutModal) return null ;
@@ -29,7 +27,7 @@ export function LogoutModal ({ LogoutTrigger } : DeleteModalProps ) {
      <div className="flex items-center justify-between">
       <section className='flex gap-1 items-center rounded-lg'>
        {/* Warning Icon */}
-       <div className="flex h-15 w-15 items-center justify-center rounded-xl bg-red-50">
+       <div className="flex h-15 w-15 items-center justify-center rounded-full bg-red-50">
          <LogOutIcon size={28} className="text-red-500" />
        </div>
         <h2 className="text-xl font-semibold tracking-tight text-gray-900">
@@ -50,7 +48,7 @@ export function LogoutModal ({ LogoutTrigger } : DeleteModalProps ) {
      {/* Content */}
      <div className="p-1 rounded-lg">
        <p className="p-2 rounded-lg text-sm leading-6 text-gray-500">
-        Are you sure you want to log out?
+        Are you sure you want to log out ?
         You will be signed out of your account and will need to log in again to access it.
        </p>
      </div>

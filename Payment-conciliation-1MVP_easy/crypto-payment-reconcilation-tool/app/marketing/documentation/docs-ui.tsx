@@ -6,6 +6,7 @@ import React, { useState , useRef , useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Logo from "@/public/images/paylume-logo.png";
+import { scrollTo } from "@/lib/autoscroll.utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDown, ArrowRight, ArrowUpRight, Blocks, Check, ChevronRight, Clock, Copy, Database, FileCode2, Fingerprint, GitBranch, Globe, KeyRound, LockKeyhole, Network, ShieldCheck ,Wallet, AlertTriangle, Layers, Zap,ShieldCheck as ShieldCheckIcon, AlertCircle, BrainCircuitIcon, ArrowRightCircleIcon, } from "lucide-react";
 import Activebeep from "@/components/Beep";
@@ -725,9 +726,7 @@ function Note({ children }: { children: React.ReactNode }) {
 
 
 export default function Documentations() {
-
   const [open, setOpen] = useState<number | null>(0);
-  const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" }); // for autoscroll to sections...
 
   return (
     <main className="min-h-screen overflow-hidden bg-white font-rubik text-slate-900 selection:bg-red-100 selection:text-red-700">
@@ -791,7 +790,7 @@ export default function Documentations() {
                 </div>
                 <span className="rounded-full bg-zinc-100 px-3 py-2 text-[10px] font-semibold text-zinc-400">OVERVIEW</span>
               </div>
-              <div className="space-y-2.5 py-5">
+              <div className="space-y-1.5 py-5">
                 {overviewCard.map(n => {
                   return (
                     <div key={n.t} className="flex items-center gap-3 rounded-xl border border-slate-100 p-3.5">

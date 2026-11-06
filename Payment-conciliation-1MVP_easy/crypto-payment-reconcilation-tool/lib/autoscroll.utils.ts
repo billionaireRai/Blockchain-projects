@@ -10,3 +10,4 @@ export function scrollToBottom(elementid:string) {
   
 }
 
+export const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" }); // for autoscroll to sections...

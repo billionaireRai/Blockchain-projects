@@ -14,10 +14,12 @@ import { ArrowLeftRight, RefreshCcw, Wallet, Users, Loader2,FileText, BarChart3 
 import usePopClose from "@/hooks/usePopClose";
 import { useAuthState } from "@/states/auth.state";
 import { handleLogoutTrigger } from "@/lib/logout.utils";
+import { useGlobalUI } from "@/states/ui.state";
 
 export default function NavigationBar() {
   const currentpath = usePathname() ; // initializing usePathname hook...
   const pathNotAllowed = ['/auth/'];
+  const { setlogoutModal } = useGlobalUI() ;
   const { isAuth , authStatus , user } = useAuthState() ;
   const { activeWorkspaceId } = useWorkspaceState() ; 
   const [loading, setloading] = useState<boolean>(false);
@@ -135,7 +137,7 @@ if (pathNotAllowed.some((p) =>  currentpath.startsWith(p))) return null ;
             className="flex w-fit cursor-pointer items-center gap-2 overflow-hidden rounded-full bg-white dark:text-white hover:bg-gray-50 p-2 text-black">
             { openOptions ? <ListChevronsDownUp size={20} /> : <ListChevronsUpDown size={20} /> }
            </div>
-           <button onClick={handleLogoutTrigger} className="flex cursor-pointer items-center justify-center gap-1.5 rounded-full bg-zinc-950  px-3 py-2 text-white ease-out hover:bg-zinc-900 ring-0 hover:ring-4 hover:ring-zinc-950/5" >
+           <button onClick={() => setlogoutModal(true)} className="flex cursor-pointer items-center justify-center gap-1.5 rounded-full bg-zinc-950  px-3 py-2 text-white ease-out hover:bg-zinc-900 ring-0 hover:ring-4 hover:ring-zinc-950/5" >
             <LogOut size={20} />
             <span>Log Out</span>
            </button>
